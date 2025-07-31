@@ -23,7 +23,7 @@ export class Usuario {
             return result
 
         } catch (e) {
-            console.log(e.message)
+            throw new Error('Error al crear el usuario')
         }
 
     }

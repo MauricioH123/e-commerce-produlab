@@ -1,7 +1,6 @@
 import express, { json } from 'express';
 import 'dotenv/config'
 import { corsMiddleware } from './middlewares/cors.js';
-import { Usuario } from './models/usuario.js';
 
 
 const PORT = process.env.PORT ?? 3000;
