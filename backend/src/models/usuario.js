@@ -4,7 +4,7 @@ import { pool } from "../config/database.js";
 export class Usuario {
     static async getAll() {
         const result = await pool.query('SELECT * FROM usuarios')
-        return result
+        return result.rows
     }
 
     static async createUser({ input }) {
