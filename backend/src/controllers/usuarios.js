@@ -1,10 +1,10 @@
-import { Usuario } from "../models/usuario.js"
+import { User } from "../models/usuario.js"
 import { validateUser } from "../schemas/usuarios.js" 
 
 export class UsuarioController {
 
     static getAll = async (req, res) => {
-        const result = await Usuario.getAll()
+        const result = await User.getAll()
         return res.status(201).json(result)
     }
 
@@ -23,7 +23,7 @@ export class UsuarioController {
             return res.status(400).json({error: JSON.parse(result.error.message)})
         }
 
-        const newUser = await Usuario.createUser({input: body})
+        const newUser = await User.createUser({input: body})
         return res.status(201).json(newUser)
     }
 }

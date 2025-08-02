@@ -6,7 +6,7 @@ const userSchema = z.object({
         .max(255, { message: 'El nombre es muy largo' }),
     correo: z.email({ message: 'El correo electrónico no es válido' }),
     numero_identificacion: z.string()
-        .min(10, { message: 'El número de identificación debe tener al menos 10 dígitos.' })
+        .min(7, { message: 'El número de identificación debe tener al menos 10 dígitos.' })
         .max(20, { message: 'El número de identificación no puede exceder los 20 dígitos.' })
         .regex(/^\d+$/, { message: 'El número de identificación solo puede contener dígitos.' }),
     contraseña: z.string()

@@ -2,7 +2,7 @@ import { pool } from "../config/database.js";
 import bcrypt  from 'bcrypt'
 
 
-export class Usuario {
+export class User {
     static async getAll() {
         try {
             const result = await pool.query('SELECT * FROM usuarios')
