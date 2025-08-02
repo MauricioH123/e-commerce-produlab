@@ -15,12 +15,11 @@ export class Usuario {
             numero_identificacion,
             contraseña,
             identificacion_id,
-            roles_id,
-            activo
+            numero_celular
         } = input
 
         try {
-            const result = await pool.query('INSERT INTO usuarios (nombre, direccion, correo ,numero_identificacion, contraseña, identificacion_id, roles_id, activo) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', [nombre, direccion, correo, numero_identificacion, contraseña, identificacion_id, roles_id, activo])
+            const result = await pool.query('INSERT INTO usuarios (nombre, direccion, correo ,numero_identificacion, contraseña, identificacion_id, numero_celular) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', [nombre, direccion, correo, numero_identificacion, contraseña, identificacion_id, numero_celular])
             return result
 
         } catch (e) {

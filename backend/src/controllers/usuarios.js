@@ -1,4 +1,5 @@
 import { Usuario } from "../models/usuario.js"
+import { validateUser } from "../schemas/usuarios.js" 
 
 export class UsuarioController {
 
@@ -8,6 +9,13 @@ export class UsuarioController {
     }
 
     static createUser = async (req, res) => {
-        const input = req.body
+        const result = validateUser(req.body)
+
+        if(input.error){
+            return res.status(400).json({error: JSON.parse(result.error.message)})
+        }
+
+        const newUser = await Usuario.createUser({input: result.data})
+        return req.status(201).json(newUser)
     }
 }
