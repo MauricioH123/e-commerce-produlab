@@ -11,11 +11,11 @@ export class UsuarioController {
     static createUser = async (req, res) => {
         const result = validateUser(req.body)
 
-        if(input.error){
+        if(result.error){
             return res.status(400).json({error: JSON.parse(result.error.message)})
         }
 
         const newUser = await Usuario.createUser({input: result.data})
-        return req.status(201).json(newUser)
+        return res.status(201).json(newUser)
     }
 }

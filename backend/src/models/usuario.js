@@ -10,7 +10,6 @@ export class Usuario {
     static async createUser({ input }) {
         const {
             nombre,
-            direccion,
             correo,
             numero_identificacion,
             contraseña,
@@ -19,8 +18,9 @@ export class Usuario {
         } = input
 
         try {
-            const result = await pool.query('INSERT INTO usuarios (nombre, direccion, correo ,numero_identificacion, contraseña, identificacion_id, numero_celular) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', [nombre, direccion, correo, numero_identificacion, contraseña, identificacion_id, numero_celular])
-            return result
+            const result = await pool.query('INSERT INTO usuarios (nombre, correo ,numero_identificacion, contraseña, identificacion_id, numero_celular) VALUES ($1, $2, $3, $4, $5, $6)', 
+                [nombre, correo, numero_identificacion, contraseña, identificacion_id, numero_celular])
+            return result.rows
 
         } catch (e) {
             throw new Error('Error al crear el usuario')
