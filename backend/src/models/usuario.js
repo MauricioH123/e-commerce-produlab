@@ -3,9 +3,18 @@ import bcrypt  from 'bcrypt'
 
 
 export class User {
-    static async getAll() {
+    static async getAll({numero_identificacion}) {
         try {
-            const result = await pool.query('SELECT * FROM usuarios')
+            let query = 'SELECT * FROM public.usuarios'
+            const param = []
+
+            if(numero_identificacion){
+                query = 'SELECT * FROM public.usuarios WHERE numero_identificacion = $1'
+                param.push(numero_identificacion)
+            }
+
+            const result = await pool.query(query, param)
+
             return result.rows
         } catch (e) {
             throw new Error(`Error al obtener todos los usuarios: ${e.message}`);
@@ -40,5 +49,13 @@ export class User {
             throw new Error('Error al crear el usuario  ' + e.message);
         }
 
+    }
+
+    static async update({id, input}){
+        try{
+            
+        }catch(e){
+
+        }
     }
 }
