@@ -3,16 +3,17 @@ import bcrypt from 'bcrypt'
 
 
 export class User {
-    static async getAll({ numero_identificacion }) {
+    static async getAll({ id }) {
+        let query = 'SELECT nombre, numero_identificacion FROM public.usuarios'
+
+        const param = []
+
+        if (id) {
+            query = 'SELECT nombre, numero_identificacion FROM public.usuarios WHERE id = $1'
+            param.push(id)
+        }
+
         try {
-            let query = 'SELECT * FROM public.usuarios'
-            const param = []
-
-            if (numero_identificacion) {
-                query = 'SELECT * FROM public.usuarios WHERE numero_identificacion = $1'
-                param.push(numero_identificacion)
-            }
-
             const result = await pool.query(query, param)
 
             return result.rows
@@ -55,8 +56,8 @@ export class User {
         const query = 'DELETE FROM public.usuarios WHERE "numero_identificacion" = $1 RETURNING numero_identificacion;'
         const param = []
 
-        if(!numero_identificacion){
-             throw new Error('No se ingreso un numero de identificacion')
+        if (!numero_identificacion) {
+            throw new Error('No se ingreso un numero de identificacion')
         }
 
         param.push(numero_identificacion)
@@ -70,6 +71,7 @@ export class User {
     }
 
     static async update({ id, input }) {
+
         try {
 
         } catch (e) {
