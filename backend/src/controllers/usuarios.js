@@ -111,6 +111,62 @@ export class UsuarioController {
         }
     }
 
+/**
+ * @swagger
+ * /usuarios/{numero_identificacion}:
+ *   delete:
+ *     summary: Eliminar un usuario
+ *     description: Elimina un usuario de la base de datos mediante su número de identificación.
+ *     tags:
+ *       - Usuarios
+ *     parameters:
+ *       - in: path
+ *         name: numero_identificacion
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Número de identificación del usuario a eliminar.
+ *     responses:
+ *       200:
+ *         description: Usuario eliminado correctamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Usuario eliminado correctamente
+ *                 result:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       numero_identificacion:
+ *                         type: string
+ *                         example: "123456789"
+ *       400:
+ *         description: Error de validación en los parámetros.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: object
+ *                   example:
+ *                     numero_identificacion: 'Debe ser un número válido'
+ *       404:
+ *         description: No se encontró el usuario o error al eliminar.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No se ingreso un numero de identificacion
+ */
     static delete = async (req, res) => {
         const { numero_identificacion } = req.params
 
