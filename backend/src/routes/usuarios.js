@@ -5,4 +5,4 @@ export const usuariosRouter = Router()
 
 usuariosRouter.get('/', UsuarioController.getAll)
 usuariosRouter.post('/', UsuarioController.createUser)
-usuariosRouter.delete('/:numero_identificacion', UsuarioController.delete)
+usuariosRouter.delete('/:id', UsuarioController.delete)

@@ -52,15 +52,15 @@ export class User {
 
     }
 
-    static async delete({ numero_identificacion }) {
-        const query = 'DELETE FROM public.usuarios WHERE "numero_identificacion" = $1 RETURNING numero_identificacion;'
+    static async delete({ id }) {
+        if (!id) {
+            throw new Error('No se ingreso el id del usuario')
+        }
+        
+        const query = 'DELETE FROM public.usuarios WHERE "id" = $1 RETURNING numero_identificacion;'
         const param = []
 
-        if (!numero_identificacion) {
-            throw new Error('No se ingreso un numero de identificacion')
-        }
-
-        param.push(numero_identificacion)
+        param.push(id)
 
         try {
             const result = await pool.query(query, param)
