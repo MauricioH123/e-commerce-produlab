@@ -6,7 +6,7 @@ export class Category {
         const query = 'SELECT id, nombre FROM public.categorias'
 
         try {
-            const result = await pool.query(query) 
+            const result = await pool.query(query)
 
             return result.rows
         } catch (e) {
