@@ -102,11 +102,36 @@ export class User {
     }
 
     static async update({ id, input }) {
+        const {
+            correo,
+            numero_celular,
+            ciudad,
+            barrio,
+            direccion,
+            codigo_postal,
+        } = input
+
+        const userQuery = `
+        UPDATE public.usuarios
+            SET correo= $1, numero_celular= $2
+        WHERE id = $3 ;
+        `
+
+        const addressQuery = `
+        UPDATE public.direccion_envios
+            SET ciudad=$1, barrio=$2, direccion=$3, codigo_postal=$4
+	    WHERE usuario_id=$5;
+        `
 
         try {
-
+            const userResult = await pool.query(userQuery, [correo, numero_celular, id])
+            const addressResult = await pool.query(addressQuery, [ciudad, barrio, direccion, codigo_postal, id])
+            return {
+                ...userResult.rows[0],
+                direccion_info: addressResult.rows[0]
+            }
         } catch (e) {
-
+            throw new Error('No FNFN ' + e.message)
         }
     }
 }
