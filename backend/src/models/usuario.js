@@ -76,18 +76,23 @@ export class User {
         }
 
         const query = `
-        SELECT 
-            use.nombre, 
-            use.correo, 
-            use.numero_identificacion, 
-            ide.nombre AS tipo_identificacion, 
-            use.numero_celular 
-        FROM usuarios AS use 
-        JOIN identificaciones AS ide ON ide.id = use.identificacion_id 
+        SELECT
+            use.nombre,
+            use.correo,
+            use.numero_identificacion,
+            ide.nombre AS tipo_identificacion,
+            use.numero_celular,
+            dir.ciudad, 
+            dir.barrio, 
+            dir.direccion, 
+            dir.codigo_postal
+        FROM public.usuarios AS use
+        JOIN public.direccion_envios AS dir ON use.id = dir.usuario_id
+        JOIN public.identificaciones AS ide ON use.identificacion_id = ide.id
         WHERE use.id = $1;
         `
         const param = [id]
-        
+
         try {
             const result = await pool.query(query, param)
             return result.rows[0]
