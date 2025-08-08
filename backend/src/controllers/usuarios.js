@@ -381,7 +381,86 @@ export class UsuarioController {
         }
     }
 
-    
+
+    /**
+     * @swagger
+     * /usuarios/{id}/profile:
+     *   put:
+     *     summary: Actualiza el perfil de un usuario, incluyendo correo y dirección.
+     *     tags:
+     *       - Usuarios
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         description: ID del usuario a actualizar (UUID).
+     *         schema:
+     *           type: string
+     *           format: uuid
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             required:
+     *               - correo
+     *               - numero_celular
+     *               - ciudad
+     *               - barrio
+     *               - direccion
+     *               - codigo_postal
+     *             properties:
+     *               correo:
+     *                 type: string
+     *                 format: email
+     *                 example: usuario@example.com
+     *               numero_celular:
+     *                 type: string
+     *                 example: "3012345678"
+     *               ciudad:
+     *                 type: string
+     *                 example: Bogotá
+     *               barrio:
+     *                 type: string
+     *                 example: Chapinero
+     *               direccion:
+     *                 type: string
+     *                 example: Calle 20 #89-66 lote 6 manzana 10
+     *               codigo_postal:
+     *                 type: string
+     *                 example: "110111"
+     *     responses:
+     *       201:
+     *         description: Usuario actualizado correctamente.
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 id:
+     *                   type: string
+     *                 correo:
+     *                   type: string
+     *                 numero_celular:
+     *                   type: string
+     *                 direccion_info:
+     *                   type: object
+     *                   properties:
+     *                     ciudad:
+     *                       type: string
+     *                     barrio:
+     *                       type: string
+     *                     direccion:
+     *                       type: string
+     *                     codigo_postal:
+     *                       type: string
+     *       400:
+     *         description: Error de validación en los datos de entrada.
+     *       500:
+     *         description: Error interno del servidor.
+     */
+
     static update = async (req, res) => {
         const body = req.body
         const validate = validateProfile(body)
@@ -393,10 +472,10 @@ export class UsuarioController {
         const { id } = req.params
 
         try {
-            const result = await User.update({id, input: body})
-            return res.status(201).json(result)
+            const result = await User.update({ id, input: body })
+            return res.status(201).json({ result, message: "Los datos fueron actualizados de forma exitosa" })
         } catch (e) {
-            return res.status(500).json({error: e.message})
+            return res.status(500).json({ error: e.message })
         }
     }
 }
