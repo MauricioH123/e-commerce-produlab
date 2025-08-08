@@ -381,7 +381,6 @@ export class UsuarioController {
         }
     }
 
-
     /**
      * @swagger
      * /usuarios/{id}/profile:

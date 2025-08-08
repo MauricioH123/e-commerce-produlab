@@ -3,6 +3,7 @@ import 'dotenv/config'
 import { corsMiddleware } from './middlewares/cors.js';
 import { usuariosRouter } from './routes/usuarios.js';
 import { swaggerDocs } from './config/swagger.js';
+import { categoryRouter } from './routes/categorias.js';
 
 
 const PORT = process.env.PORT ?? 3000;
@@ -13,6 +14,7 @@ app.use(json())
 app.use(corsMiddleware())
 
 app.use('/usuarios', usuariosRouter)
+app.use('/categorias', categoryRouter)
 
 swaggerDocs(app)
 
