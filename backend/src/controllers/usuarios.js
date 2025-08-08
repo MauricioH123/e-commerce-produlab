@@ -220,6 +220,143 @@ export class UsuarioController {
 
 
 
+    /**
+ * @swagger
+ * /usuarios/{id}/profile:
+ *   get:
+ *     summary: Obtener perfil completo de un usuario
+ *     description: Obtiene información detallada del perfil de un usuario específico, incluyendo datos personales y tipo de identificación
+ *     tags:
+ *       - Usuarios
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: UUID único del usuario
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         example: "123e4567-e89b-12d3-a456-426614174000"
+ *     responses:
+ *       200:
+ *         description: Perfil del usuario obtenido exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 nombre:
+ *                   type: string
+ *                   description: Nombre completo del usuario
+ *                   example: "mauricio hernández"
+ *                 correo:
+ *                   type: string
+ *                   format: email
+ *                   description: Correo electrónico del usuario
+ *                   example: "mauricio.hernandez@email.com"
+ *                 numero_identificacion:
+ *                   type: string
+ *                   description: Número de documento de identificación
+ *                   example: "1234567890"
+ *                 tipo_identificacion:
+ *                   type: string
+ *                   description: Tipo de documento de identificación
+ *                   example: "Cédula de Ciudadanía"
+ *                 numero_celular:
+ *                   type: string
+ *                   description: Número de teléfono celular
+ *                   example: "3001234567"
+ *               required:
+ *                 - nombre
+ *                 - correo
+ *                 - numero_identificacion
+ *                 - tipo_identificacion
+ *                 - numero_celular
+ *             example:
+ *               nombre: "mauricio hernández"
+ *               correo: "mauricio.hernandez@email.com"
+ *               numero_identificacion: "1234567890"
+ *               tipo_identificacion: "Cédula de Ciudadanía"
+ *               numero_celular: "3001234567"
+ *       400:
+ *         description: Error de validación en el parámetro ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: object
+ *                   description: Objeto con los errores de validación
+ *                   example:
+ *                     id: "Debe ser un UUID válido"
+ *             examples:
+ *               uuid_invalido:
+ *                 summary: UUID inválido
+ *                 value:
+ *                   error:
+ *                     id: "Debe ser un UUID válido"
+ *               id_faltante:
+ *                 summary: ID faltante
+ *                 value:
+ *                   error: "ID es requerido"
+ *       404:
+ *         description: Usuario no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Usuario no encontrado"
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Mensaje de error interno
+ *                   example: "Error al obtener los datos del usuario: Database connection failed"
+ *             examples:
+ *               error_base_datos:
+ *                 summary: Error de base de datos
+ *                 value:
+ *                   error: "Error al obtener los datos del usuario: Database connection failed"
+ *               error_consulta:
+ *                 summary: Error en consulta SQL
+ *                 value:
+ *                   error: "Error al obtener los datos del usuario: Invalid column name"
+ */
+    static getProfile = async (req, res) => {
+        const { id } = req.params
+
+        if (!id) {
+            return res.status(400).json({ error: "ID es requerido" })
+        }
+
+        const validate = validatePartialUser({ id })
+
+        if (validate.error) {
+            return res.status(400).json({ error: JSON.parse(validate.error.message) })
+        }
+
+        try {
+            const userProfile = await User.getProfile({ id })
+
+            if (!userProfile) {
+                return res.status(404).json({ error: "Usuario no encontrado" })
+            }
+            
+            return res.status(200).json(userProfile)
+        } catch (e) {
+            return res.status(500).json({ error: e.message })
+        }
+    }
+
     static update = async (req, res) => {
         const body = req.body
         const validate = validatePartialUser(body)

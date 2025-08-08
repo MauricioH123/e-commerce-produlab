@@ -4,12 +4,12 @@ import bcrypt from 'bcrypt'
 
 export class User {
     static async getAll({ id }) {
-        let query = 'SELECT nombre, numero_identificacion FROM public.usuarios'
+        let query = 'SELECT id, nombre, numero_identificacion FROM public.usuarios'
 
         const param = []
 
         if (id) {
-            query = 'SELECT nombre, numero_identificacion FROM public.usuarios WHERE id = $1'
+            query = 'SELECT id, nombre, numero_identificacion FROM public.usuarios WHERE id = $1'
             param.push(id)
         }
 
@@ -56,7 +56,7 @@ export class User {
         if (!id) {
             throw new Error('No se ingreso el id del usuario')
         }
-        
+
         const query = 'DELETE FROM public.usuarios WHERE "id" = $1 RETURNING numero_identificacion;'
         const param = []
 
@@ -67,6 +67,32 @@ export class User {
             return result.rows
         } catch (e) {
             throw new Error('Error al eliminar el usuario')
+        }
+    }
+
+    static async getProfile({ id }) {
+        if (!id) {
+            throw new Error('No se ha asignado un ID de usuario')
+        }
+
+        const query = `
+        SELECT 
+            use.nombre, 
+            use.correo, 
+            use.numero_identificacion, 
+            ide.nombre AS tipo_identificacion, 
+            use.numero_celular 
+        FROM usuarios AS use 
+        JOIN identificaciones AS ide ON ide.id = use.identificacion_id 
+        WHERE use.id = $1;
+        `
+        const param = [id]
+        
+        try {
+            const result = await pool.query(query, param)
+            return result.rows[0]
+        } catch (e) {
+            throw new Error('Error al obtener los datos del usuario: ' + e.message)
         }
     }
 
