@@ -14,11 +14,32 @@ export class Category {
         }
     }
 
-    static delete() {
+    static async delete({ id }) {
+        const query = 'DELETE FROM public.categorias WHERE id = $1 RETURNING id, nombre, activa;'
+        const param = []
+
+        param.push(id)
+
+        try {
+            const result = await pool.query(query, param)
+            return result.rows
+        } catch (e) {
+            throw new Error('No se puedo eliminar la categoria' + e.message)
+        }
 
     }
 
-    static create() {
+    
+    static async create({ nombre }) {
+        const query = 'INSERT INTO public.categorias(nombre) VALUES($1) RETURNING id, nombre, activa;'
+        const param = []
+        param.push(nombre)
 
+        try{
+            const result = await pool.query(query, param)
+            return result.rows
+        }catch(e){
+            throw new Error('No se pudo crear la categoria ' + e.message)
+        }
     }
 }
