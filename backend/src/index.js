@@ -5,6 +5,7 @@ import { usuariosRouter } from './routes/usuarios.js';
 import { swaggerDocs } from './config/swagger.js';
 import { categoryRouter } from './routes/categorias.js';
 import { productosRouter } from './routes/productos.js';
+import { errorHandler } from './middlewares/errorHandler.js';
 
 
 const PORT = process.env.PORT ?? 3000;
@@ -19,6 +20,9 @@ app.use('/categorias', categoryRouter)
 app.use('/productos', productosRouter)
 
 swaggerDocs(app)
+
+app.use(errorHandler)
+
 
 app.listen(3000, () => {
     console.log(`Servidor escuchando en http://localhost:${PORT}`)

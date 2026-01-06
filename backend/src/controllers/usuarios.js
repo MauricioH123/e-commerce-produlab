@@ -133,7 +133,7 @@ export class UsuarioController {
      *         description: Error interno del servidor
      */
 
-    static createUser = async (req, res) => {
+    static createUser = async (req, res, next) => {
         const body = {
             nombre: req.body.nombre.toLowerCase(),
             correo: req.body.correo.toLowerCase(),
@@ -152,7 +152,7 @@ export class UsuarioController {
             const newUser = await User.createUser({ input: body })
             return res.status(201).json(newUser)
         } catch (e) {
-            return res.status(500).json(e.message)
+            next(e)
         }
     }
 

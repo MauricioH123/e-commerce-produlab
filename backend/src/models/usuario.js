@@ -1,5 +1,6 @@
 import { pool } from "../config/database.js";
 import bcrypt from 'bcrypt'
+import { ConflictError } from "../errors/ConflictError.js";
 
 
 export class User {
@@ -42,20 +43,19 @@ export class User {
         } = input
 
         try {
-            const existingUserQuery = await pool.query('SELECT use.correo, use.numero_identificacion FROM public.usuarios AS use WHERE correo= $1 OR numero_identificacion = $2;', [correo, numero_identificacion])
-
-            if (existingUserQuery.rows.length > 0) {
-                throw new Error('El correo o el número de identificación ya están registrados.')
-            }
 
             const hashedPassword = await bcrypt.hash(contraseña, parseInt(process.env.SALT_ROUNDS, 10))
 
-            const result = await pool.query('INSERT INTO usuarios (nombre, correo ,numero_identificacion, contraseña, identificacion_id, numero_celular) VALUES ($1, $2, $3, $4, $5, $6) RETURNING numero_identificacion',
+            const result = await pool.query('INSERT INTO usuarios (nombre, correo ,numero_identificacion, contraseña, identificacion_id, numero_celular, fecha_creacion) VALUES ($1, $2, $3, $4, $5, $6, CURRENT_DATE) RETURNING numero_identificacion',
                 [nombre, correo, numero_identificacion, hashedPassword, identificacion_id, numero_celular])
 
             return result.rows[0]
 
         } catch (e) {
+            if(e.code === '23505'){
+                throw new ConflictError("El correo o el número de identificación ya están registrados.")
+            }
+            
             throw new Error('Error al crear el usuario  ' + e.message);
         }
 
