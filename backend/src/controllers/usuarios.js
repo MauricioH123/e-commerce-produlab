@@ -8,44 +8,55 @@ export class UsuarioController {
      * @swagger
      * /usuarios:
      *   get:
-     *     summary: Obtener lista de usuarios o un usuario por ID
+     *     summary: Obtener lista paginada de usuarios
      *     tags:
      *       - Usuarios
      *     parameters:
      *       - in: query
-     *         name: id
+     *         name: page
      *         required: false
-     *         description: UUID del usuario a consultar
+     *         description: Número de página (por defecto 1)
      *         schema:
-     *           type: string
-     *           format: uuid
+     *           type: integer
+     *           example: 1
+     *       - in: query
+     *         name: limit
+     *         required: false
+     *         description: Cantidad de registros por página (por defecto 10)
+     *         schema:
+     *           type: integer
+     *           example: 10
      *     responses:
      *       200:
-     *         description: Lista de usuarios obtenida exitosamente
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: array
-     *               items:
-     *                 type: object
-     *                 properties:
-     *                   nombre:
-     *                     type: string
-     *                     example: Mauricio Hernández
-     *                   numero_identificacion:
-     *                     type: string
-     *                     example: 123456789
-     *       400:
-     *         description: Error de validación en el parámetro `id`
+     *         description: Lista paginada de usuarios obtenida exitosamente
      *         content:
      *           application/json:
      *             schema:
      *               type: object
      *               properties:
-     *                 error:
-     *                   type: object
-     *                   example:
-     *                     id: "Debe ser un UUID válido"
+     *                 data:
+     *                   type: array
+     *                   items:
+     *                     type: object
+     *                     properties:
+     *                       id:
+     *                         type: integer
+     *                         example: 1
+     *                       nombre:
+     *                         type: string
+     *                         example: Mauricio Hernández
+     *                       numero_identificacion:
+     *                         type: string
+     *                         example: 123456789
+     *                 total:
+     *                   type: integer
+     *                   example: 42
+     *                 page:
+     *                   type: integer
+     *                   example: 1
+     *                 totalPages:
+     *                   type: integer
+     *                   example: 5
      *       500:
      *         description: Error interno del servidor al consultar usuarios
      *         content:
@@ -59,15 +70,15 @@ export class UsuarioController {
      */
 
     static getAll = async (req, res) => {
-        
-        let {page, limit} = req.query
+
+        let { page, limit } = req.query
 
         page = parseInt(page) || 1
         limit = parseInt(limit) || 10
 
         try {
-            const result = await User.getAll({page, limit})
-            
+            const result = await User.getAll({ page, limit })
+
             return res.status(200).json(result)
         } catch (e) {
             return res.status(500).json({ error: e.message })
