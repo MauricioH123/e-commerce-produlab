@@ -4,6 +4,7 @@ import { corsMiddleware } from './middlewares/cors.js';
 import { usuariosRouter } from './routes/usuarios.js';
 import { swaggerDocs } from './config/swagger.js';
 import { categoryRouter } from './routes/categorias.js';
+import { productosRouter } from './routes/productos.js';
 
 
 const PORT = process.env.PORT ?? 3000;
@@ -15,6 +16,7 @@ app.use(corsMiddleware())
 
 app.use('/usuarios', usuariosRouter)
 app.use('/categorias', categoryRouter)
+app.use('/productos', productosRouter)
 
 swaggerDocs(app)
 

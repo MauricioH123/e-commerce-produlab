@@ -9,3 +9,8 @@ const productSchema = z.object({
     activo: z.boolean(),
     iva: z.boolean()
 })
+
+
+export function validatePartialProduct(object) {
+    return productSchema.partial().safeParse(object)
+}

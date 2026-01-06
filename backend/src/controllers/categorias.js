@@ -47,7 +47,7 @@ export class CategoryController {
      *                   type: string
      *                   example: No se pudo obtener las categorias
      */
-    static getAll = async (req, res) => {
+    static getAll = async (res) => {
         try {
             const categories = await Category.getAll()
 

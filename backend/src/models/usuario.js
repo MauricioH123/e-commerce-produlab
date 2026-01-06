@@ -3,20 +3,29 @@ import bcrypt from 'bcrypt'
 
 
 export class User {
-    static async getAll({ id }) {
-        let query = 'SELECT id, nombre, numero_identificacion FROM public.usuarios'
 
-        const param = []
+    static async getAll({ page, limit }) {
+        const offset = (page - 1) * limit
 
-        if (id) {
-            query = 'SELECT id, nombre, numero_identificacion FROM public.usuarios WHERE id = $1'
-            param.push(id)
-        }
+        const query = 'SELECT id, nombre, numero_identificacion FROM public.usuarios ORDER BY fecha_creacion DESC LIMIT $1 OFFSET $2;'
+        
+        const countQuery = 'SELECT COUNT(*) FROM public.usuarios'
+
 
         try {
-            const result = await pool.query(query, param)
+            const [dataResult, countResult] = await Promise.all([
+                pool.query(query, [limit, offset]),
+                pool.query(countQuery)
+            ])
 
-            return result.rows
+            const total = parseInt(countResult.rows[0].count)
+
+            return {
+                data:dataResult.rows,
+                total,
+                page,
+                totalPages: Math.ceil(total / limit)
+            }
         } catch (e) {
             throw new Error(`Error al obtener todos los usuarios: ${e.message}`);
         }

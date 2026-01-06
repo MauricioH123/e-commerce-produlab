@@ -59,18 +59,15 @@ export class UsuarioController {
      */
 
     static getAll = async (req, res) => {
-        const { id } = req.query
+        
+        let {page, limit} = req.query
 
-        if (id) {
-            const validate = validatePartialUser({ id })
-
-            if (validate.error) {
-                return res.status(400).json({ error: JSON.parse(validate.error.message) })
-            }
-        }
+        page = parseInt(page) || 1
+        limit = parseInt(limit) || 10
 
         try {
-            const result = await User.getAll({ id })
+            const result = await User.getAll({page, limit})
+            
             return res.status(200).json(result)
         } catch (e) {
             return res.status(500).json({ error: e.message })
