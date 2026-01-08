@@ -31,3 +31,7 @@ export function validateUser(object){
 export function validatePartialUser(object){
     return userSchema.partial().safeParse(object)
 }
+
+export function validateUserCreate(Objeto){
+    return userSchema.omit({id: true}).safeParse(Objeto)
+}

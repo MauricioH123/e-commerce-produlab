@@ -1,5 +1,5 @@
 import { User } from "../models/usuario.js"
-import { validateUser, validatePartialUser } from "../schemas/usuarios.js"
+import { validatePartialUser, validateUserCreate } from "../schemas/usuarios.js"
 import { validateProfile } from "../schemas/profile.js"
 import { InvalidError } from "../errors/InvalidError.js"
 
@@ -171,12 +171,11 @@ export class UsuarioController {
             numero_celular: req.body.numero_celular
         }
 
-        const result = validatePartialUser(body)
+        const result = validateUserCreate(body)
 
         if (result.error) {
-            return res.status(400).json({ error: JSON.parse(result.error.message) })
-            // return next(new result(JSON.parse(validation.error.message)))
-
+            // return res.status(400).json({ error: JSON.parse(result.error.message) })
+            return next(new InvalidError({error:JSON.parse(result.error.message)}))
         }
 
         try {
