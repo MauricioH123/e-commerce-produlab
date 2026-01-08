@@ -1,13 +1,40 @@
-export function errorHandler(err, req, res, next){
-    if(err.isOperational){
-        return res.status(err.statusCode).json({
-            error: err.message
+export function errorHandler(err, req, res, next) {
+    if (!err.isOperational) {
+        console.error('ERROR NO OPERACIONAL:', {
+            message: err.message,
+            stack: err.stack,
+            originalError: err.originalError
         })
     }
 
-    console.log(err)
+    //----PRODUCCION-----
+    // if (!err.isOperational) {
+    //     logger.error('ERROR NO OPERACIONAL:', {
+    //         message: err.message,
+    //         stack: err.stack,
+    //         url: req.originalUrl,
+    //         method: req.method,
+    //         userId: req.user?.id,
+    //         timestamp: new Date().toISOString()
+    //     });
+    // }
+
+
+    if (err.isOperational) {
+        return res.status(err.statusCode).json({
+            success: false,
+            error: {
+                message: err.message,
+                ...(err.resource && { resource: err.resource })
+            }
+        })
+    }
 
     return res.status(500).json({
-        error:"Error interno del servidor"
+        success: false,
+        error: {
+            code: 'INTERNAL_ERROR',
+            message: 'Error interno del servidor'
+        }
     })
 }

@@ -1,6 +1,8 @@
 import { pool } from "../config/database.js";
 import bcrypt from 'bcrypt'
 import { ConflictError } from "../errors/ConflictError.js";
+import { NotFoundError } from "../errors/NotFoundError.js";
+import { DatabaseError } from "pg";
 
 
 export class User {
@@ -9,7 +11,7 @@ export class User {
         const offset = (page - 1) * limit
 
         const query = 'SELECT id, nombre, numero_identificacion FROM public.usuarios ORDER BY fecha_creacion DESC LIMIT $1 OFFSET $2;'
-        
+
         const countQuery = 'SELECT COUNT(*) FROM public.usuarios'
 
 
@@ -22,7 +24,7 @@ export class User {
             const total = parseInt(countResult.rows[0].count)
 
             return {
-                data:dataResult.rows,
+                data: dataResult.rows,
                 total,
                 page,
                 totalPages: Math.ceil(total / limit)
@@ -52,30 +54,37 @@ export class User {
             return result.rows[0]
 
         } catch (e) {
-            if(e.code === '23505'){
+            if (e.code === '23505') {
                 throw new ConflictError("El correo o el número de identificación ya están registrados.")
             }
-            
+
             throw new Error('Error al crear el usuario  ' + e.message);
         }
 
     }
 
     static async delete({ id }) {
-        if (!id) {
-            throw new Error('No se ingreso el id del usuario')
-        }
 
-        const query = 'DELETE FROM public.usuarios WHERE "id" = $1 RETURNING numero_identificacion;'
-        const param = []
-
-        param.push(id)
+        const query = 'DELETE FROM public.usuarios WHERE id = $1 RETURNING nombre;'
 
         try {
-            const result = await pool.query(query, param)
+            const result = await pool.query(query, [id])
+
+            if(result.rowCount === 0){
+                throw new NotFoundError('Usuario')
+            }
+
             return result.rows
         } catch (e) {
-            throw new Error('Error al eliminar el usuario')
+            if(e.isOperational){
+                throw e
+            }
+
+            if(e.code === '23503'){
+                throw new DatabaseError('No se puede eliminar el usuario porque tiene registros relacionados', e)
+            }
+
+            throw new DatabaseError('Error al eliminar el usuario', e)
         }
     }
 

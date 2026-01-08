@@ -1,6 +1,7 @@
 import { User } from "../models/usuario.js"
 import { validateUser, validatePartialUser } from "../schemas/usuarios.js"
 import { validateProfile } from "../schemas/profile.js"
+import { InvalidError } from "../errors/InvalidError.js"
 
 export class UsuarioController {
 
@@ -91,7 +92,8 @@ export class UsuarioController {
      * /usuarios:
      *   post:
      *     summary: Crear un nuevo usuario
-     *     tags: [Usuarios]
+     *     tags:
+     *       - Usuarios
      *     requestBody:
      *       required: true
      *       content:
@@ -108,27 +110,53 @@ export class UsuarioController {
      *             properties:
      *               nombre:
      *                 type: string
-     *                 example: juan perez
+     *                 example: Juan Perez
      *               correo:
      *                 type: string
+     *                 format: email
      *                 example: juan@example.com
      *               numero_identificacion:
      *                 type: string
-     *                 example: 123456789
+     *                 example: "123456789"
      *               contraseña:
      *                 type: string
-     *                 example: pass123
+     *                 example: Password123
      *               identificacion_id:
-     *                 type: string
+     *                 type: integer
      *                 example: 1
      *               numero_celular:
      *                 type: string
-     *                 example: 3001234567
+     *                 example: "3001234567"
      *     responses:
      *       201:
      *         description: Usuario creado correctamente
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 numero_identificacion:
+     *                   type: string
+     *                   example: "123456789"
      *       400:
-     *         description: Error de validación
+     *         description: Error de validación de datos
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 error:
+     *                   type: object
+     *       409:
+     *         description: Conflicto por datos duplicados
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 error:
+     *                   type: string
+     *                   example: El correo o el número de identificación ya están registrados.
      *       500:
      *         description: Error interno del servidor
      */
@@ -142,10 +170,13 @@ export class UsuarioController {
             identificacion_id: req.body.identificacion_id,
             numero_celular: req.body.numero_celular
         }
+
         const result = validatePartialUser(body)
 
         if (result.error) {
             return res.status(400).json({ error: JSON.parse(result.error.message) })
+            // return next(new result(JSON.parse(validation.error.message)))
+
         }
 
         try {
@@ -210,20 +241,20 @@ export class UsuarioController {
      *               example: "Error al eliminar el usuario"
      */
 
-    static delete = async (req, res) => {
+    static delete = async (req, res, next) => {
         const { id } = req.params
 
         const validation = validatePartialUser({ id })
 
         if (validation.error) {
-            return res.status(400).json({ error: JSON.parse(validation.error.message) })
+            return next(new InvalidError(JSON.parse(validation.error.message)))
         }
 
         try {
             const result = await User.delete({ id })
-            return res.status(200).json({ message: 'Usuario eliminado correctamente', result })
+            return res.status(200).json({ success: true, message: 'Usuario eliminado correctamente', data: result })
         } catch (e) {
-            return res.status(404).json(e.message)
+            next(e)
         }
     }
 
