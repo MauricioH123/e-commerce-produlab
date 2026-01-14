@@ -24,7 +24,7 @@ swaggerDocs(app)
 app.use(errorHandler)
 
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
     console.log(`Servidor escuchando en http://localhost:${PORT}`)
     console.log('Swagger disponible en http://localhost:3000/api-docs')
 })

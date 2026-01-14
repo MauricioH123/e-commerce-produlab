@@ -2,6 +2,8 @@ import { User } from "../models/usuario.js"
 import { validatePartialUser, validateUserCreate } from "../schemas/usuarios.js"
 import { validateProfile } from "../schemas/profile.js"
 import { InvalidError } from "../errors/InvalidError.js"
+import { RegisterUserService } from "../services/registerUser.service.js"
+import { createUserDTO } from "../dtos/createUser.dto.js"
 
 export class UsuarioController {
 
@@ -162,24 +164,21 @@ export class UsuarioController {
      */
 
     static createUser = async (req, res, next) => {
-        const body = {
-            nombre: req.body.nombre.toLowerCase(),
-            correo: req.body.correo.toLowerCase(),
-            numero_identificacion: req.body.numero_identificacion,
-            contraseña: req.body.contraseña,
-            identificacion_id: req.body.identificacion_id,
-            numero_celular: req.body.numero_celular
-        }
 
-        const result = validateUserCreate(body)
+        const result = validateUserCreate(req.body)
 
         if (result.error) {
             // return res.status(400).json({ error: JSON.parse(result.error.message) })
-            return next(new InvalidError({error:JSON.parse(result.error.message)}))
+            return next(new InvalidError({ error: JSON.parse(result.error.message) }))
         }
 
+        const userDTO = createUserDTO(result.data)
+
         try {
-            const newUser = await User.createUser({ input: body })
+            const newUser = await RegisterUserService.execute({
+                userData: userDTO,
+                addressData: ""
+            })
             return res.status(201).json(newUser)
         } catch (e) {
             next(e)

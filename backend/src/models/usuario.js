@@ -34,7 +34,9 @@ export class User {
         }
     }
 
-    static async createUser({ input }) {
+    static async createUser({ input, client }) {
+        const db = client ?? pool
+
         const {
             nombre,
             correo,
@@ -48,7 +50,7 @@ export class User {
 
             const hashedPassword = await bcrypt.hash(contraseña, parseInt(process.env.SALT_ROUNDS, 10))
 
-            const result = await pool.query('INSERT INTO usuarios (nombre, correo ,numero_identificacion, contraseña, identificacion_id, numero_celular, fecha_creacion) VALUES ($1, $2, $3, $4, $5, $6, CURRENT_DATE) RETURNING numero_identificacion',
+            const result = await db.query('INSERT INTO usuarios (nombre, correo ,numero_identificacion, contraseña, identificacion_id, numero_celular, fecha_creacion) VALUES ($1, $2, $3, $4, $5, $6, CURRENT_DATE) RETURNING id',
                 [nombre, correo, numero_identificacion, hashedPassword, identificacion_id, numero_celular])
 
             return result.rows[0]
@@ -89,9 +91,6 @@ export class User {
     }
 
     static async getProfile({ id }) {
-        if (!id) {
-            throw new Error('No se ha asignado un ID de usuario')
-        }
 
         const query = `
         SELECT
@@ -109,10 +108,8 @@ export class User {
         JOIN public.identificaciones AS ide ON use.identificacion_id = ide.id
         WHERE use.id = $1;
         `
-        const param = [id]
-
         try {
-            const result = await pool.query(query, param)
+            const result = await pool.query(query, [id])
             return result.rows[0]
         } catch (e) {
             throw new Error('Error al obtener los datos del usuario: ' + e.message)
