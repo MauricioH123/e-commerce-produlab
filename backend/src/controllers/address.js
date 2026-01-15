@@ -4,8 +4,8 @@ export class Address {
 
     }
 
-    static create = async (req, res) => {
-
+    static create = async (req, res, next) => {
+        
     }
 
     

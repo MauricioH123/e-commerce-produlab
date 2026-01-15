@@ -34,7 +34,7 @@ export class User {
         }
     }
 
-    static async createUser({ input, client }) {
+    static async create({ input, client }) {
         const db = client ?? pool
 
         const {

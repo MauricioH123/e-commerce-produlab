@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const userSchema = z.object({
+export const userSchema = z.object({
     id: z.uuid(),
     nombre: z.string()
         .min(1, { message: 'El nombre es obligatorio' })

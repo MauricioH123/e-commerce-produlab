@@ -25,7 +25,8 @@ export function errorHandler(err, req, res, next) {
             success: false,
             error: {
                 message: err.message,
-                ...(err.resource && { resource: err.resource })
+                ...(err.resource && { resource: err.resource }),
+                ...(err.details && { details: err.details })
             }
         })
     }

@@ -1,9 +1,11 @@
 import { User } from "../models/usuario.js"
-import { validatePartialUser, validateUserCreate } from "../schemas/usuarios.js"
+import { validatePartialUser } from "../schemas/usuarios.js"
 import { validateProfile } from "../schemas/profile.js"
 import { InvalidError } from "../errors/InvalidError.js"
 import { RegisterUserService } from "../services/registerUser.service.js"
 import { createUserDTO } from "../dtos/createUser.dto.js"
+import { createAddressDTO } from "../dtos/createAddress.dto.js"
+import { validateRegisterUser } from "../schemas/registerUser.js"
 
 export class UsuarioController {
 
@@ -165,19 +167,20 @@ export class UsuarioController {
 
     static createUser = async (req, res, next) => {
 
-        const result = validateUserCreate(req.body)
+        const result = validateRegisterUser(req.body)
 
         if (result.error) {
             // return res.status(400).json({ error: JSON.parse(result.error.message) })
-            return next(new InvalidError({ error: JSON.parse(result.error.message) }))
+            return next(new InvalidError("Datos invalidos", JSON.parse(result.error.message)))
         }
 
-        const userDTO = createUserDTO(result.data)
+        const userDTO = createUserDTO(result.data.user)
+        const addressDTO = createAddressDTO(result.data.address)
 
         try {
             const newUser = await RegisterUserService.execute({
                 userData: userDTO,
-                addressData: ""
+                addressData: addressDTO
             })
             return res.status(201).json(newUser)
         } catch (e) {

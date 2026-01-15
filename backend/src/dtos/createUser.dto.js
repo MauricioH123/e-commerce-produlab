@@ -1,12 +1,12 @@
 import { capitalizeWords } from "../utils/stringUtils.js";
 
-export function createUserDTO(data){
+export function createUserDTO(objeto){
     return {
-        nombre: capitalizeWords(data.nombre),
-        correo: data.correo.trim().toLowerCase(),
-        numero_identificacion: data.numero_identificacion,
-        contraseña: data.contraseña,
-        identificacion_id: data.identificacion_id,
-        numero_celular: data.numero_celular
+        nombre: capitalizeWords(objeto.nombre),
+        correo: objeto.correo.trim().toLowerCase(),
+        numero_identificacion: objeto.numero_identificacion,
+        contraseña: objeto.contraseña,
+        identificacion_id: objeto.identificacion_id,
+        numero_celular: objeto.numero_celular
     }
 }

@@ -1,5 +1,6 @@
 import { pool } from '../config/database.js'
 import { User } from '../models/usuario.js'
+import { Address } from '../models/address.js'
 
 export class RegisterUserService {
 
@@ -10,12 +11,12 @@ export class RegisterUserService {
         try {
             await client.query('BEGIN')
 
-            const user = await User.createUser({
+            const user = await User.create({
                 input: userData,
                 client
             })
 
-            await Address.create({
+            const address = await Address.create({
                 input: {
                     ...addressData,
                     usuario_id: user.id
