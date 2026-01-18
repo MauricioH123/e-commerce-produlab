@@ -24,13 +24,13 @@ export class User {
             const total = parseInt(countResult.rows[0].count)
 
             return {
-                data: dataResult.rows,
+                users: dataResult.rows,
                 total,
                 page,
                 totalPages: Math.ceil(total / limit)
             }
         } catch (e) {
-            throw new Error(`Error al obtener todos los usuarios: ${e.message}`);
+            throw e
         }
     }
 
@@ -60,14 +60,14 @@ export class User {
                 throw new ConflictError("El correo o el número de identificación ya están registrados.")
             }
 
-            throw new Error('Error al crear el usuario  ' + e.message);
+            throw e
         }
 
     }
 
     static async delete({ id }) {
 
-        const query = 'DELETE FROM public.usuarios WHERE id = $1 RETURNING nombre;'
+        const query = 'UPDATE public.usuarios SET activo = false, fecha_actualizacion = CURRENT_DATE WHERE id = $1 RETURNING nombre;'
 
         try {
             const result = await pool.query(query, [id])
@@ -76,7 +76,7 @@ export class User {
                 throw new NotFoundError('Usuario')
             }
 
-            return result.rows
+            return result.rows[0]
         } catch (e) {
             if(e.isOperational){
                 throw e

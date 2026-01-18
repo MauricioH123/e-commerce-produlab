@@ -6,6 +6,7 @@ import { RegisterUserService } from "../services/registerUser.service.js"
 import { createUserDTO } from "../dtos/createUser.dto.js"
 import { createAddressDTO } from "../dtos/createAddress.dto.js"
 import { validateRegisterUser } from "../schemas/registerUser.js"
+import { createdResponse, successResponse, } from "../utils/responseHelper.js"
 
 export class UsuarioController {
 
@@ -84,11 +85,10 @@ export class UsuarioController {
         try {
             const result = await User.getAll({ page, limit })
 
-            return res.status(200).json(result)
+            return successResponse(res, result)
         } catch (e) {
-            return res.status(500).json({ error: e.message })
+            throw e
         }
-
     }
 
     /**
@@ -182,7 +182,7 @@ export class UsuarioController {
                 userData: userDTO,
                 addressData: addressDTO
             })
-            return res.status(201).json(newUser)
+            return createdResponse(res, newUser)
         } catch (e) {
             next(e)
         }
@@ -397,10 +397,6 @@ export class UsuarioController {
 
     static getProfile = async (req, res) => {
         const { id } = req.params
-
-        if (!id) {
-            return res.status(400).json({ error: "ID es requerido" })
-        }
 
         const validate = validatePartialUser({ id })
 

@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { userSchema } from "./usuarios.js"
-import { addressSchemas } from "./adddress.js"
+import { addressSchemas } from "./address.js"
 
 
 const registerUserSchemas = z.object({

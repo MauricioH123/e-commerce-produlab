@@ -21,15 +21,15 @@ export class Product {
 
             const data = result.rows
 
-            let totalQuey = 'SELECT COUNT(*) FROM productos'
+            let totalQuery = 'SELECT COUNT(*) FROM productos'
             const totalParams = []
 
             if (nombre) {
-                totalQuey += ` WHERE nombre = $1`
+                totalQuery += ` WHERE nombre = $1`
                 totalParams.push(nombre)
             }
 
-            const totalResult = await pool.query(totalQuey, totalParams)
+            const totalResult = await pool.query(totalQuery, totalParams)
             const total = parseInt(totalResult.rows[0].count)
 
             return {
