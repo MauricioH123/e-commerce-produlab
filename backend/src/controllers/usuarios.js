@@ -6,7 +6,8 @@ import { RegisterUserService } from "../services/registerUser.service.js"
 import { createUserDTO } from "../dtos/createUser.dto.js"
 import { createAddressDTO } from "../dtos/createAddress.dto.js"
 import { validateRegisterUser } from "../schemas/registerUser.js"
-import { createdResponse, successResponse, } from "../utils/responseHelper.js"
+import { createdResponse, deletedResponse, successResponse, } from "../utils/responseHelper.js"
+import { SoftDeleteUserService } from "../services/softDeleteUser.service.js"
 
 export class UsuarioController {
 
@@ -75,7 +76,7 @@ export class UsuarioController {
      *                   example: "Error al obtener todos los usuarios: <mensaje>"
      */
 
-    static getAll = async (req, res) => {
+    static getAll = async (req, res, next) => {
 
         let { page, limit } = req.query
 
@@ -87,7 +88,7 @@ export class UsuarioController {
 
             return successResponse(res, result)
         } catch (e) {
-            throw e
+            next(e)
         }
     }
 
@@ -170,7 +171,6 @@ export class UsuarioController {
         const result = validateRegisterUser(req.body)
 
         if (result.error) {
-            // return res.status(400).json({ error: JSON.parse(result.error.message) })
             return next(new InvalidError("Datos invalidos", JSON.parse(result.error.message)))
         }
 
@@ -252,8 +252,8 @@ export class UsuarioController {
         }
 
         try {
-            const result = await User.delete({ id })
-            return res.status(200).json({ success: true, message: 'Usuario eliminado correctamente', data: result })
+            const result = await SoftDeleteUserService.delete(validation.data)
+            return deletedResponse(res, result)
         } catch (e) {
             next(e)
         }

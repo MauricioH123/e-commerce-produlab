@@ -2,7 +2,7 @@ import { pool } from "../config/database.js";
 import bcrypt from 'bcrypt'
 import { ConflictError } from "../errors/ConflictError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
-import { DatabaseError } from "pg";
+import { DatabaseError } from "../errors/DatabaseError.js";
 
 
 export class User {
@@ -10,7 +10,7 @@ export class User {
     static async getAll({ page, limit }) {
         const offset = (page - 1) * limit
 
-        const query = 'SELECT id, nombre, numero_identificacion FROM public.usuarios ORDER BY fecha_creacion DESC LIMIT $1 OFFSET $2;'
+        const query = 'SELECT id, nombre, numero_identificacion, activo FROM public.usuarios ORDER BY fecha_creacion DESC LIMIT $1 OFFSET $2;'
 
         const countQuery = 'SELECT COUNT(*) FROM public.usuarios'
 
@@ -32,6 +32,18 @@ export class User {
         } catch (e) {
             throw e
         }
+    }
+
+    static async findById({ id }) {
+        const query = 'SELECT id, nombre, numero_identificacion, activo FROM public.usuarios WHERE id = $1;'
+
+            const dataUser = await pool.query(query, [id])
+
+            if(dataUser.rowCount === 0){
+                throw new NotFoundError('Usuario')
+            }
+
+            return dataUser.rows[0]
     }
 
     static async create({ input, client }) {
@@ -67,22 +79,22 @@ export class User {
 
     static async delete({ id }) {
 
-        const query = 'UPDATE public.usuarios SET activo = false, fecha_actualizacion = CURRENT_DATE WHERE id = $1 RETURNING nombre;'
+        const query = 'UPDATE public.usuarios SET activo = false, fecha_eliminacion = CURRENT_DATE WHERE id = $1 RETURNING nombre;'
 
         try {
             const result = await pool.query(query, [id])
 
-            if(result.rowCount === 0){
+            if (result.rowCount === 0) {
                 throw new NotFoundError('Usuario')
             }
 
             return result.rows[0]
         } catch (e) {
-            if(e.isOperational){
+            if (e.isOperational) {
                 throw e
             }
 
-            if(e.code === '23503'){
+            if (e.code === '23503') {
                 throw new DatabaseError('No se puede eliminar el usuario porque tiene registros relacionados', e)
             }
 
