@@ -3,7 +3,7 @@ import { User } from "../models/usuario.js";
 
 export class SoftDeleteUserService {
 
-    static async delete({ id }) {
+    static async execute({ id }) {
 
             const findUser = await User.findById({ id })
 

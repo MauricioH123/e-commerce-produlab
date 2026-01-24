@@ -35,15 +35,25 @@ export class User {
     }
 
     static async findById({ id }) {
-        const query = 'SELECT id, nombre, numero_identificacion, activo FROM public.usuarios WHERE id = $1;'
+        const query = `
+        SELECT 
+        us.nombre,
+        us.correo,
+        us.numero_identificacion,
+        us.activo,
+        us.numero_celular,
+        ide.nombre AS tipo_identificacion
+        FROM public.usuarios AS us
+        JOIN public.identificaciones AS ide ON ide.id = us.identificacion_id
+        WHERE us.id = $1;`
 
-            const dataUser = await pool.query(query, [id])
+        const dataUser = await pool.query(query, [id])
 
-            if(dataUser.rowCount === 0){
-                throw new NotFoundError('Usuario')
-            }
+        if (dataUser.rowCount === 0) {
+            throw new NotFoundError('Usuario')
+        }
 
-            return dataUser.rows[0]
+        return dataUser.rows[0]
     }
 
     static async create({ input, client }) {
@@ -74,7 +84,6 @@ export class User {
 
             throw e
         }
-
     }
 
     static async delete({ id }) {
@@ -99,32 +108,6 @@ export class User {
             }
 
             throw new DatabaseError('Error al eliminar el usuario', e)
-        }
-    }
-
-    static async getProfile({ id }) {
-
-        const query = `
-        SELECT
-            use.nombre,
-            use.correo,
-            use.numero_identificacion,
-            ide.nombre AS tipo_identificacion,
-            use.numero_celular,
-            dir.ciudad, 
-            dir.barrio, 
-            dir.direccion, 
-            dir.codigo_postal
-        FROM public.usuarios AS use
-        JOIN public.direccion_envios AS dir ON use.id = dir.usuario_id
-        JOIN public.identificaciones AS ide ON use.identificacion_id = ide.id
-        WHERE use.id = $1;
-        `
-        try {
-            const result = await pool.query(query, [id])
-            return result.rows[0]
-        } catch (e) {
-            throw new Error('Error al obtener los datos del usuario: ' + e.message)
         }
     }
 

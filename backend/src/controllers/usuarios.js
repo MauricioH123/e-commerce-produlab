@@ -8,6 +8,7 @@ import { createAddressDTO } from "../dtos/createAddress.dto.js"
 import { validateRegisterUser } from "../schemas/registerUser.js"
 import { createdResponse, deletedResponse, successResponse, } from "../utils/responseHelper.js"
 import { SoftDeleteUserService } from "../services/softDeleteUser.service.js"
+import { GetUserProfile } from "../services/getUserProfile.service.js"
 
 export class UsuarioController {
 
@@ -252,7 +253,7 @@ export class UsuarioController {
         }
 
         try {
-            const result = await SoftDeleteUserService.delete(validation.data)
+            const result = await SoftDeleteUserService.execute(validation.data)
             return deletedResponse(res, result)
         } catch (e) {
             next(e)
@@ -395,25 +396,21 @@ export class UsuarioController {
      *                   error: "Error al obtener los datos del usuario: Invalid column name"
      */
 
-    static getProfile = async (req, res) => {
+    static getProfile = async (req, res, next) => {
         const { id } = req.params
 
-        const validate = validatePartialUser({ id })
+        const validation = validatePartialUser({ id })
 
-        if (validate.error) {
-            return res.status(400).json({ error: JSON.parse(validate.error.message) })
+        if (validation.error) {
+            return next(new InvalidError(JSON.parse(validation.error.message)))
         }
 
         try {
-            const userProfile = await User.getProfile({ id })
+            const result = await GetUserProfile.execute(validation.data)
 
-            if (!userProfile) {
-                return res.status(404).json({ error: "Usuario no encontrado" })
-            }
-
-            return res.status(200).json(userProfile)
+            return successResponse(res, result)
         } catch (e) {
-            return res.status(500).json({ error: e.message })
+            next(e)
         }
     }
 
