@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "description": "Tienda virtual desarrollada para la empresa Produlab (Montería, Colombia).",
-  "workspaces": ["./backend"],
+  "workspaces": [
+    "./backend"
+  ],
   "scripts": {
     "dev": "npm run dev --workspace backend",
     "install:all": "npm install --workspace backend && npm install --workspace frontend"
@@ -12,7 +14,13 @@
     "type": "git",
     "url": "git+https://github.com/MauricioH123/e-commerce-produlab.git"
   },
-  "keywords": ["ecommerce", "node", "react", "express", "produlab"],
+  "keywords": [
+    "ecommerce",
+    "node",
+    "react",
+    "express",
+    "produlab"
+  ],
   "author": "Mauricio Hernández",
   "license": "ISC",
   "bugs": {
@@ -20,6 +28,7 @@
   },
   "homepage": "https://github.com/MauricioH123/e-commerce-produlab#readme",
   "devDependencies": {
+    "@types/pg": "^8.20.0",
     "concurrently": "^8.2.0"
   }
 }

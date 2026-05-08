@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { userSchema } from "./usuarios.js"
+import { userSchema } from "./users.js"
 import { addressSchemas } from "./address.js"
 
 

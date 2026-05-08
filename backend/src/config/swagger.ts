@@ -1,5 +1,6 @@
 import swaggerJSDoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
+import { Application } from 'express'
 
 const swaggerSpec = swaggerJSDoc({
      definition: {
@@ -16,12 +17,12 @@ const swaggerSpec = swaggerJSDoc({
     ],
   },
   apis: [
-    './src/routes/*.js',
-    './src/controllers/*.js',
-    './src/models/*.js',
+    './src/routes/*.ts',
+    './src/controllers/*.ts',
+    './src/models/*.ts',
   ],
 })
 
-export function swaggerDocs(app) {
+export function swaggerDocs(app: Application) {
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 }

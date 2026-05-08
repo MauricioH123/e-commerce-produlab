@@ -1,5 +1,5 @@
-import { User } from "../models/usuario.js"
-import { validatePartialUser } from "../schemas/usuarios.js"
+import { User } from "../models/user.js"
+import { validatePartialUser } from "../schemas/users.js"
 import { validateProfile } from "../schemas/profile.js"
 import { InvalidError } from "../errors/InvalidError.js"
 import { RegisterUserService } from "../services/registerUser.service.js"
@@ -9,6 +9,7 @@ import { validateRegisterUser } from "../schemas/registerUser.js"
 import { createdResponse, deletedResponse, successResponse, } from "../utils/responseHelper.js"
 import { SoftDeleteUserService } from "../services/softDeleteUser.service.js"
 import { GetUserProfile } from "../services/getUserProfile.service.js"
+import { Request, Response, NextFunction } from "express"
 
 export class UsuarioController {
 
@@ -77,7 +78,7 @@ export class UsuarioController {
      *                   example: "Error al obtener todos los usuarios: <mensaje>"
      */
 
-    static getAll = async (req, res, next) => {
+    static getAll = async (req:Request, res:Response, next:NextFunction) => {
 
         let { page, limit } = req.query
 
@@ -249,7 +250,7 @@ export class UsuarioController {
         const validation = validatePartialUser({ id })
 
         if (validation.error) {
-            return next(new InvalidError(JSON.parse(validation.error.message)))
+            return next(new InvalidError("Datos invalidos" ,JSON.parse(validation.error.message)))
         }
 
         try {
@@ -402,7 +403,7 @@ export class UsuarioController {
         const validation = validatePartialUser({ id })
 
         if (validation.error) {
-            return next(new InvalidError(JSON.parse(validation.error.message)))
+            return next(new InvalidError("Datos invalidos", JSON.parse(validation.error.message)))
         }
 
         try {

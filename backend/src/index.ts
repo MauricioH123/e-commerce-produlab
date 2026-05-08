@@ -1,10 +1,10 @@
 import express, { json } from 'express';
 import 'dotenv/config'
 import { corsMiddleware } from './middlewares/cors.js';
-import { usuariosRouter } from './routes/usuarios.js';
+import { usersRouter } from './routes/users.js';
 import { swaggerDocs } from './config/swagger.js';
-import { categoryRouter } from './routes/categorias.js';
-import { productosRouter } from './routes/productos.js';
+import { categoryRouter } from './routes/categories.js';
+import { productsRouter } from './routes/products.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 
 
@@ -15,9 +15,9 @@ const app = express()
 app.use(json())
 app.use(corsMiddleware())
 
-app.use('/usuarios', usuariosRouter)
-app.use('/categorias', categoryRouter)
-app.use('/productos', productosRouter)
+app.use('/users', usersRouter)
+app.use('/categories', categoryRouter)
+app.use('/products', productsRouter)
 
 swaggerDocs(app)
 

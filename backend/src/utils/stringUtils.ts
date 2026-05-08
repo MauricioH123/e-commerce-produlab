@@ -1,4 +1,4 @@
-export function capitalizeWords(str){
+export function capitalizeWords(str:string):string{
     return str.trim()
     .toLowerCase()
     .split(/\s+/)  

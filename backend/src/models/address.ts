@@ -5,6 +5,7 @@ export class Address {
     static async create({ input, client }) {
         const db = client ?? pool
 
+
         const {
             ciudad,
             barrio,

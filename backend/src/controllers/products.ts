@@ -1,9 +1,10 @@
-import { Product } from "../models/producto.js";
+import { Product } from "../models/product.js";
+import { Request, Response, NextFunction } from "express";
 
 
 export class ProductoController {
 
-    static getAll = async (req, res) => {
+    static getAll = async (req: Request, res: Response, next: NextFunction) => {
         try {
 
             let {page, limit, nombre} = req.query

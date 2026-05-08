@@ -1,6 +1,13 @@
 import { capitalizeWords } from "../utils/stringUtils.js";
 
-export function createAddressDTO(objeto){
+type Address={
+    ciudad:string,
+    barrio:string,
+    direccion:string
+    codigo_postal:string
+}
+
+export function createAddressDTO(objeto:Address){
     
     return {
         ciudad: capitalizeWords(objeto.ciudad),

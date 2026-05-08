@@ -1,5 +1,22 @@
-import { Category } from "../models/categoria.js";
-import { validatePartialCategory } from "../schemas/categoria.js";
+import { Category } from "../models/category.js";
+import { validatePartialCategory } from "../schemas/category.js";
+import { Request, Response, NextFunction } from "express";
+import { InvalidError } from "../errors/InvalidError.js";
+import { SoftDeleteCategory } from "../services/softDeleteCategory.service.js";
+import { RegisterCategory } from "../services/registerCategory.service.js";
+import { createdResponse, deletedResponse, successResponse } from "../utils/responseHelper.js";
+import { createCategoryDTO } from "../dtos/createCategory.dto.js";
+import { ActivateCategory } from "../services/activateCategory.service.js";
+
+// NOTA: PARA ELIMINAR CATEGORIA NO TENER EN CUENTA SI LA CATEGORIA TIENE UN PRODUCTO ASOCIADO, TENER ENCUENTA SI LA CATEGORIA TIENE UN PRODUCTO ACTIVO
+//       CAMBIAR LAS RESPUESTA DE LOS CONTROLADORES POR LAS NUEVAS
+//       CUANDO SE ACTUALICE UNA CATEGORIA YA SEA PARA ELIMINAR, CAMBIAR NOMBRE, O ACTIVAR SIEMPRE DEVOLVER TODO EL RECURSO COMPLETO 
+
+
+// NOTA IMPORTANTE: Y SI SE CREA UN METODO QUE SOLO SEA ACTUALIZAR Y QUE DENTRO TENGA TODO LO NECESARIO PARA MODIFICAR 
+//                  UNA CATEGORIA YA SEA PARA ELIMINAR, ACTIVAR O MODIFICAR EL NOMBRE Y ASI NOS AHORRAMOS LOS METODOS 
+//                  DE ELIMINAR, ACTIVAR Y ACTUALIZAR QUE ESTAN CEPARADOS.
+//                                     PIENSALOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 
 export class CategoryController {
 
@@ -47,17 +64,13 @@ export class CategoryController {
      *                   type: string
      *                   example: No se pudo obtener las categorias
      */
-    static getAll = async (res) => {
+    static getAll = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const categories = await Category.getAll()
 
-            if (categories.length === 0) {
-                return res.status(404).json({ error: 'No existen categorias' })
-            }
-
-            return res.status(200).json(categories)
+            return successResponse({ res, data: categories })
         } catch (e) {
-            return res.status(500).json({ error: e.message })
+            next(e)
         }
     }
 
@@ -141,24 +154,21 @@ export class CategoryController {
      *                   example: No se puedo eliminar la categoria
      */
 
-    static delete = async (req, res) => {
+    static delete = async (req: Request, res: Response, next: NextFunction) => {
         const id = Number(req.params.id)
 
         const validate = validatePartialCategory({ id })
 
         if (validate.error) {
-            return res.status(400).json({ error: JSON.parse(validate.error.message) })
+            return next(new InvalidError("Datos invalidos", JSON.parse(validate.error.message)))
         }
 
         try {
-            const categoryDelete = await Category.delete({ id })
+            await SoftDeleteCategory.execute({ id })
 
-            if (categoryDelete.length === 0) {
-                return res.status(404).json({ error: 'No existe la categoria' })
-            }
-            return res.status(200).json(categoryDelete)
+            return deletedResponse(res, { id })
         } catch (e) {
-            return res.status(500).json({ error: e.message })
+            return next(e)
         }
     }
 
@@ -239,19 +249,36 @@ export class CategoryController {
      *                   example: No se pudo crear la categoria
      */
 
-    static create = async (req, res) => {
-        const nombre = req.body.nombre.toLowerCase()
-        const validate = validatePartialCategory({ nombre })
+    static create = async (req: Request, res: Response, next: NextFunction) => {
+        const name = req.body.name
+        const validate = validatePartialCategory({ name })
 
         if (validate.error) {
-            return res.status(400).json({ error: JSON.parse(validate.error.message) })
+            return next(new InvalidError("Datos invalidos", JSON.parse(validate.error.message)))
         }
 
+        const categoryDTO = createCategoryDTO(name)
+
         try {
-            const result = await Category.create({ nombre })
-            return res.status(201).json(result)
+            const category = await RegisterCategory.execute({ name: categoryDTO });
+            return createdResponse(res, category)
         } catch (e) {
-            return res.status(500).json({ error: e.message })
+            next(e)
+        }
+    }
+
+    static activate = async (req: Request, res: Response, next: NextFunction) => {
+        const id = req.body.id
+        const validate = validatePartialCategory({ id })
+
+        if (validate.error) { return next(new InvalidError("Datos invalidos", JSON.parse(validate.error.message))) }
+
+        try {
+            const category = await ActivateCategory.execute({ id })
+
+            return successResponse()
+        } catch (e) {
+            next(e)
         }
     }
 }

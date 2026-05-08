@@ -1,9 +1,10 @@
 import { Address } from "../models/address.js";
-import { User } from "../models/usuario.js";
+import { User } from "../models/user.js";
+
 
 export class GetUserProfile {
 
-    static async execute({ id }) {
+    static async execute({ id }:{id:number}) {
 
         const user = await User.findById({ id })
 
