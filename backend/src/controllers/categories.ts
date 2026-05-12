@@ -7,6 +7,7 @@ import { RegisterCategory } from "../services/registerCategory.service.js";
 import { createdResponse, deletedResponse, successResponse } from "../utils/responseHelper.js";
 import { createCategoryDTO } from "../dtos/createCategory.dto.js";
 import { ActivateCategory } from "../services/activateCategory.service.js";
+import { UpdateCategoryName } from "../services/updateNameCategory.service.js";
 
 // NOTA: PARA ELIMINAR CATEGORIA NO TENER EN CUENTA SI LA CATEGORIA TIENE UN PRODUCTO ASOCIADO, TENER ENCUENTA SI LA CATEGORIA TIENE UN PRODUCTO ACTIVO
 //       CAMBIAR LAS RESPUESTA DE LOS CONTROLADORES POR LAS NUEVAS
@@ -164,9 +165,9 @@ export class CategoryController {
         }
 
         try {
-            await SoftDeleteCategory.execute({ id })
+            const category = await SoftDeleteCategory.execute({ id })
 
-            return deletedResponse(res, { id })
+            return successResponse({ res, data: category })
         } catch (e) {
             return next(e)
         }
@@ -261,14 +262,14 @@ export class CategoryController {
 
         try {
             const category = await RegisterCategory.execute({ name: categoryDTO });
-            return createdResponse(res, category)
+            return createdResponse({ res, data: category })
         } catch (e) {
             next(e)
         }
     }
 
     static activate = async (req: Request, res: Response, next: NextFunction) => {
-        const id = req.body.id
+        const id = Number(req.params.id)
         const validate = validatePartialCategory({ id })
 
         if (validate.error) { return next(new InvalidError("Datos invalidos", JSON.parse(validate.error.message))) }
@@ -276,7 +277,25 @@ export class CategoryController {
         try {
             const category = await ActivateCategory.execute({ id })
 
-            return successResponse()
+            return successResponse({ res, data: category })
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    static updateName = async (req: Request, res: Response, next: NextFunction) => {
+        const input = req.body
+        const validate = validatePartialCategory({ name: input.name, id: input.id })
+
+        if (validate.error) {
+            return next(new InvalidError("Datos invalidos", JSON.parse(validate.error.message)))
+        }
+
+        const categoryDTO = createCategoryDTO(input.name)
+
+        try {
+            const category = await UpdateCategoryName.execute({ name: categoryDTO, id: input.id })
+            return successResponse({ res, data: category, message: "Categoria Actualizada" })
         } catch (e) {
             next(e)
         }

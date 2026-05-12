@@ -1,13 +1,15 @@
 import { ConflictError } from "../errors/ConflictError.js";
-import { Category } from "../models/category.js";
+import { Category, CategoryProps } from "../models/category.js";
 
 export class ActivateCategory {
-    static async execute({ id }: { id: number }):Promise<void> {
+    static async execute({ id }: { id: number }):Promise<CategoryProps> {
 
         const affected = await Category.activate({ id })
 
-        if (affected === 0) {
+        if (affected === null) {
             throw new ConflictError("La categoria esta activada")
         }
+
+        return affected
     }
 }

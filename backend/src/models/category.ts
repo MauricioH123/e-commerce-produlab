@@ -17,11 +17,11 @@ export class Category {
     }
 
 
-    static async delete({ id }: { id: number }): Promise<number> {
+    static async delete({ id }: { id: number }): Promise<CategoryProps> {
         const query =
-            "UPDATE categories SET state = false WHERE id = $1 AND state = true AND NOT EXISTS ( SELECT 1 FROM productos WHERE productos.categoria_id = categories.id ) RETURNING id, state;"
+            "UPDATE categories SET state = false WHERE id = $1 AND state = true AND NOT EXISTS ( SELECT 1 FROM productos WHERE productos.categoria_id = categories.id ) RETURNING id, name,state;"
         const result = await pool.query(query, [id])
-        return result.rowCount ?? 0
+        return result.rows[0] ?? null
     }
 
 
@@ -32,9 +32,15 @@ export class Category {
         return result.rows
     }
 
-    static async activate({ id }: { id: number }): Promise<number> {
-        const query = "UPDATE categories SET state = true WHERE id = $1 AND state = false RETURNING id;"
+    static async activate({ id }: { id: number }): Promise<CategoryProps> {
+        const query = "UPDATE categories SET state = true WHERE id = $1 AND state = false RETURNING id, name, state;"
         const result = await pool.query(query, [id])
-        return result.rowCount ?? 0
+        return result.rows[0] ?? null
+    }
+
+    static async updateName({ name, id }: { name: string, id: number }): Promise<CategoryProps> {
+        const query = "UPDATE categories SET name = $1 WHERE id= $2 AND name != $1 RETURNING id, name, state"
+        const result = await pool.query(query, [name, id])
+        return result.rows[0] ?? null
     }
 }
