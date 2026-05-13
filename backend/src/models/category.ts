@@ -19,7 +19,7 @@ export class Category {
 
     static async delete({ id }: { id: number }): Promise<CategoryProps> {
         const query =
-            "UPDATE categories SET state = false WHERE id = $1 AND state = true AND NOT EXISTS ( SELECT 1 FROM productos WHERE productos.categoria_id = categories.id ) RETURNING id, name,state;"
+            "UPDATE categories SET state = false WHERE id = $1 AND state = true AND NOT EXISTS (SELECT 1 FROM productos WHERE productos.categoria_id = categories.id AND productos.activo = true) RETURNING id, name, state;"
         const result = await pool.query(query, [id])
         return result.rows[0] ?? null
     }
