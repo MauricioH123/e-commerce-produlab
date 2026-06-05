@@ -1,4 +1,5 @@
 import { ConflictError } from "../errors/ConflictError.js";
+import { NotFoundError } from "../errors/NotFoundError.js";
 import { Category, CategoryProps } from "../models/category.js";
 import { DatabaseError } from "pg";
 
@@ -8,7 +9,7 @@ export class UpdateCategoryName {
         try {
             const categoryAffected = await Category.updateName({ name, id })
             if (categoryAffected === null) {
-                throw new ConflictError("Nombre de la categoria igual a la antigua")
+                throw new NotFoundError("Categoria")
             }
 
             return categoryAffected

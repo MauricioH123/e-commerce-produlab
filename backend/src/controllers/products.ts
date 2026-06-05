@@ -1,25 +1,22 @@
 import { Product } from "../models/product.js";
 import { Request, Response, NextFunction } from "express";
+import { successResponse } from "../utils/responseHelper.js";
 
 
 export class ProductoController {
 
     static getAll = async (req: Request, res: Response, next: NextFunction) => {
+
+        const page = Number(req.query.page) || 1
+        const limit = Number(req.query.limit) || 10
+        const name = typeof req.query.name === "string" ? req.query.name : ''
+
         try {
+            const productos = await Product.getAll({ page, limit, name })
 
-            let {page, limit, nombre} = req.query
-            page = parseInt(page) || 1
-            limit = parseInt(limit) || 10
-
-            const productos = await Product.getAll({page, limit, nombre})
-
-            if (productos.data.length === 0) {
-                return res.status(404).json({ error: 'No existe el producto' })
-            }
-
-            return res.status(200).json(productos)
+            return successResponse({ res, data: productos })
         } catch (e) {
-            return res.status(500).json({ error: e.message })
+            next(e)
         }
     }
 }

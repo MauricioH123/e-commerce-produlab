@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from "express";
 import { InvalidError } from "../errors/InvalidError.js";
 import { SoftDeleteCategory } from "../services/softDeleteCategory.service.js";
 import { RegisterCategory } from "../services/registerCategory.service.js";
-import { createdResponse, deletedResponse, successResponse } from "../utils/responseHelper.js";
+import { createdResponse, successResponse } from "../utils/responseHelper.js";
 import { createCategoryDTO } from "../dtos/createCategory.dto.js";
 import { ActivateCategory } from "../services/activateCategory.service.js";
 import { UpdateCategoryName } from "../services/updateNameCategory.service.js";
@@ -274,8 +274,9 @@ export class CategoryController {
     }
 
     static updateName = async (req: Request, res: Response, next: NextFunction) => {
+        const param = Number(req.params.id)
         const input = req.body
-        const validate = validatePartialCategory({ name: input.name, id: input.id })
+        const validate = validatePartialCategory({ name: input.name, id: param })
 
         if (validate.error) {
             return next(new InvalidError("Datos invalidos", JSON.parse(validate.error.message)))
@@ -284,7 +285,7 @@ export class CategoryController {
         const categoryDTO = createCategoryDTO(input.name)
 
         try {
-            const category = await UpdateCategoryName.execute({ name: categoryDTO, id: input.id })
+            const category = await UpdateCategoryName.execute({ name: categoryDTO, id: param })
             return successResponse({ res, data: category, message: "Categoria Actualizada" })
         } catch (e) {
             next(e)
