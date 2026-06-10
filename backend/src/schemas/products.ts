@@ -1,16 +1,23 @@
 import { z } from 'zod'
+import { ProductS } from '../dtos/createProduct.dto.js'
 
 const productSchema = z.object({
     id: z.number().int(),
-    nombre: z.string(),
-    descripcion: z.string(),
-    foto: z.string(),
-    categoria_id: z.number().int(),
-    activo: z.boolean(),
-    iva: z.boolean()
+    name: z.string(),
+    description: z.string(),
+    photo: z.json(),
+    category_id: z.number().int(),
+    state: z.boolean(),
+    iva: z.boolean(),
+    price: z.number(),
+    brand_id: z.number().int(),
 })
 
 
-export function validatePartialProduct(object) {
+export function validateProduct(object:ProductS) {
+    return productSchema.safeParse(object)
+}
+
+export function validatePartialProduct(object: Partial<ProductS>) {
     return productSchema.partial().safeParse(object)
 }
