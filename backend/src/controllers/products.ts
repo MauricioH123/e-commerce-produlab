@@ -4,7 +4,8 @@ import { createdResponse, successResponse } from "../utils/responseHelper.js";
 import { capitalizeWords } from "../utils/stringUtils.js";
 import { validatePartialProduct } from "../schemas/products.js";
 import { InvalidError } from "../errors/InvalidError.js";
-import { createProduct } from "../dtos/createProduct.dto.js";
+import { RegisterProduct } from "../services/registerProduct.service.js";
+import { createProductDTO } from "../dtos/createProduct.dto.js";
 
 
 export class ProductoController {
@@ -25,17 +26,18 @@ export class ProductoController {
     }
 
     static create = async (req: Request, res: Response, next: NextFunction) => {
-        const input = req.body
-        const validate = validatePartialProduct(input)
+        const body = req.body
+        const validate = validatePartialProduct(body)
 
         if (validate.error) {
             return next(new InvalidError("Datos invalidos", validate.error.issues))
         }
 
-        const productDTO = createProduct(input)
+        const productDTO = createProductDTO(body)
 
         try {
-            const product = await Product.create({ input: productDTO })
+            const product = await RegisterProduct.execute(productDTO)
+
             return createdResponse({ res, data: product })
         } catch (e) {
             next(e)

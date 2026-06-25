@@ -1,5 +1,6 @@
+import { PoolClient } from "pg";
 import { pool } from "../config/database.js";
-import { ProductS } from "../dtos/createProduct.dto.js";
+import { TProduct } from "../dtos/createProduct.dto.js";
 
 type ProductosPage = {
     data: any,
@@ -12,7 +13,7 @@ export class Product {
 
     static async getAll({ name, page, limit }: { name: string, page: number, limit: number }): Promise<ProductosPage> {
         const offset = (page - 1) * limit
-        let query = `SELECT id, name, description, photo, category_id, state, iva, price, brand_id FROM products`
+        let query = `SELECT id, name, description, category_id, state, iva, price, brand_id FROM products`
         const params = []
 
         if (name) {
@@ -46,18 +47,17 @@ export class Product {
         }
     }
 
-    static async create({ input }: { input: ProductS }): Promise<ProductS> {
+    static async create({ input, client }: { input: Omit<TProduct, 'photos' | 'id'>, client: PoolClient }): Promise<Omit<TProduct, 'photos'>> {
         const values = [
             input.name,
             input.description,
             input.category_id,
             input.price,
             input.brand_id,
-            JSON.stringify(input.photo),
             input.iva
         ]
-        const query = 'INSERT INTO public.products (name, description, category_id, price, brand_id, photo, iva, creation_date, activation_date) VALUES($1, $2, $3, $4, $5, $6, $7, CURRENT_DATE, CURRENT_DATE) RETURNING id, name, description, category_id, price, brand_id, photo;'
-        const result = await pool.query(query, values)
+        const query = 'INSERT INTO public.products (name, description, category_id, price, brand_id, iva, creation_date, activation_date) VALUES($1, $2, $3, $4, $5, $6, NOW(), NOW()) RETURNING id, name, description, category_id, price, brand_id, iva;'
+        const result = await client.query(query, values)
         return result.rows[0]
     }
 }

@@ -6,6 +6,7 @@ import { swaggerDocs } from './config/swagger.js';
 import { categoryRouter } from './routes/categories.js';
 import { productsRouter } from './routes/products.js';
 import { errorHandler } from './middlewares/errorHandler.js';
+// import './jobs/cleanIdempotencyKeys.js';
 
 
 const PORT = process.env.PORT ?? 3000;

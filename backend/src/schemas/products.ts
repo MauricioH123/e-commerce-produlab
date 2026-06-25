@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { ProductS } from '../dtos/createProduct.dto.js'
+import { TProduct } from '../dtos/createProduct.dto.js'
 
 const productSchema = z.object({
     id: z.number().int(),
@@ -14,10 +14,10 @@ const productSchema = z.object({
 })
 
 
-export function validateProduct(object:ProductS) {
+export function validateProduct(object: Omit<TProduct, 'id'>) {
     return productSchema.safeParse(object)
 }
 
-export function validatePartialProduct(object: Partial<ProductS>) {
+export function validatePartialProduct(object: Partial<TProduct>) {
     return productSchema.partial().safeParse(object)
 }

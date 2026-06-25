@@ -30,5 +30,8 @@
   "devDependencies": {
     "@types/pg": "^8.20.0",
     "concurrently": "^8.2.0"
+  },
+  "dependencies": {
+    "node-cron": "^4.4.1"
   }
 }
