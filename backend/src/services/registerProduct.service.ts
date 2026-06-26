@@ -1,6 +1,7 @@
+import { DatabaseError } from "pg";
 import { pool } from "../config/database.js";
 import { TProduct } from "../dtos/createProduct.dto.js";
-import { DatabaseError } from "../errors/DatabaseError.js";
+import { ConflictError } from "../errors/ConflictError.js";
 import { Photos } from "../models/photos.js";
 import { Product } from "../models/product.js";
 
@@ -26,6 +27,13 @@ export class RegisterProduct {
             return product
         } catch (e) {
             await client.query('ROLLBACK')
+
+            if (e instanceof DatabaseError) {
+                if (e.code === '23505') {
+                    throw new ConflictError('Ya existe un producto con esos datos')
+                }
+            }
+
             throw e
         } finally {
             client.release()

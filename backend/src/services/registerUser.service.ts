@@ -29,6 +29,7 @@ export class RegisterUserService {
             return user
         } catch (e) {
             await client.query('ROLLBACK')
+    
             throw e
         } finally {
             client.release()
