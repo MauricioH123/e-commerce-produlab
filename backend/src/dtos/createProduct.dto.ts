@@ -1,4 +1,5 @@
 // import { normalizePhotos } from "../utils/normalizePhotos.js"
+import { Product } from "../models/product.js"
 import { capitalizeWords } from "../utils/stringUtils.js"
 
 export type ProductPhoto = {
@@ -6,6 +7,20 @@ export type ProductPhoto = {
     order: number,
     is_main: boolean,
     alt_text: string,
+}
+
+export type ProductMain = {
+    id: number,
+    name: string,
+    category_id: number,
+    category: string,
+    iva: boolean,
+    price: number,
+    brand_id: number,
+    brand: string,
+    id_image: number,
+    url: string,
+    alt_text: string
 }
 
 export type TProduct = {

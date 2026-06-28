@@ -1,9 +1,9 @@
 import { PoolClient } from "pg";
 import { pool } from "../config/database.js";
-import { TProduct } from "../dtos/createProduct.dto.js";
+import { ProductMain, TProduct } from "../dtos/createProduct.dto.js";
 
 type ProductosPage = {
-    data: any,
+    products: ProductMain[],
     total: number,
     page: number,
     totalPages: number
@@ -11,36 +11,38 @@ type ProductosPage = {
 
 export class Product {
 
-    static async getAll({ name, page, limit }: { name: string, page: number, limit: number }): Promise<ProductosPage> {
+    static async getAll({ page, limit }: { page: number, limit: number }): Promise<ProductosPage> {
         const offset = (page - 1) * limit
-        let query = `SELECT id, name, description, category_id, state, iva, price, brand_id FROM products`
-        const params = []
+        let query = `
+        SELECT 
+        p.id, 
+        p.name, 
+        p.category_id, 
+        c.name AS category, 
+        p.iva, 
+        p.price, 
+        p.brand_id, 
+        m.nombre AS brand, 
+        pi.id AS id_image, 
+        pi.url, 
+        pi.alt_text 
+        FROM public.products AS p 
+        INNER JOIN public.product_images AS pi ON p.id = pi.producto_id AND pi.is_main = TRUE 
+        INNER JOIN public.categories AS c ON p.category_id = c.id 
+        INNER JOIN public.marcas AS m ON p.brand_id = m.id
+        WHERE p.state = TRUE
+        ORDER BY p.id
+        LIMIT 10 
+        OFFSET $1;`
 
-        if (name) {
-            query += ` WHERE name = $1`
-            params.push(name)
-        }
+        const queryCount = 'SELECT COUNT(*) FROM public.products WHERE TRUE'
 
-        query += ` ORDER BY id ASC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`
-        params.push(limit, offset)
-
-        const result = await pool.query(query, params)
-
-        const data = result.rows
-
-        let totalQuery = 'SELECT COUNT(*) FROM products'
-        const totalParams = []
-
-        if (name) {
-            totalQuery += ` WHERE name = $1`
-            totalParams.push(name)
-        }
-
-        const totalResult = await pool.query(totalQuery, totalParams)
-        const total = parseInt(totalResult.rows[0].count)
+        const result = await pool.query(query, [offset])
+        const resultCount = await pool.query(queryCount)
+        const total = resultCount.rows[0].count
 
         return {
-            data: data,
+            products: result.rows,
             total,
             page,
             totalPages: Math.ceil(total / limit),
