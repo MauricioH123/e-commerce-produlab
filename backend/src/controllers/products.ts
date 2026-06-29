@@ -14,7 +14,7 @@ export class ProductoController {
         const page = Number(req.query.page) || 1
         const limit = Number(req.query.limit) || 10
         const category_id = Number(req.query.category)
-        const brand_id = Number(req.query.brand) 
+        const brand_id = Number(req.query.brand)
 
         try {
             const productos = await Product.getAll({ page, limit, category_id, brand_id })
@@ -42,6 +42,24 @@ export class ProductoController {
         } catch (e) {
             next(e)
         }
+    }
+
+    static getById = (req: Request, res: Response, next: NextFunction) => {
 
     }
+
+    static update = (req: Request, res: Response, next: NextFunction) => {
+
+    }
+
+    static delete = (req: Request, res: Response, next: NextFunction) => {
+
+    }
+
+    static activate = (req: Request, res: Response, next: NextFunction) => {
+
+    }
+
+
+
 }
