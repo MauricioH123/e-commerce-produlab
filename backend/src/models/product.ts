@@ -1,4 +1,4 @@
-import { PoolClient } from "pg";
+import { PoolClient, Query } from "pg";
 import { pool } from "../config/database.js";
 import { ProductMain, TProduct } from "../dtos/createProduct.dto.js";
 
@@ -11,17 +11,16 @@ type ProductosPage = {
 
 export class Product {
 
-    static async getAll({ page, limit }: { page: number, limit: number }): Promise<ProductosPage> {
+    static async getAll({ page, limit, category_id, brand_id }: { page: number, limit: number, category_id: number, brand_id: number }): Promise<ProductosPage> {
         const offset = (page - 1) * limit
+
         let query = `
         SELECT 
         p.id, 
         p.name, 
-        p.category_id, 
         c.name AS category, 
         p.iva, 
         p.price, 
-        p.brand_id, 
         m.nombre AS brand, 
         pi.id AS id_image, 
         pi.url, 
@@ -29,17 +28,36 @@ export class Product {
         FROM public.products AS p 
         INNER JOIN public.product_images AS pi ON p.id = pi.producto_id AND pi.is_main = TRUE 
         INNER JOIN public.categories AS c ON p.category_id = c.id 
-        INNER JOIN public.marcas AS m ON p.brand_id = m.id
-        WHERE p.state = TRUE
-        ORDER BY p.id
-        LIMIT 10 
-        OFFSET $1;`
+        INNER JOIN public.marcas AS m ON p.brand_id = m.id`
 
-        const queryCount = 'SELECT COUNT(*) FROM public.products WHERE TRUE'
+        let queryCountProduct = `
+        SELECT COUNT(*)FROM public.products AS p 
+        INNER JOIN public.product_images AS pi ON p.id = pi.producto_id AND pi.is_main = TRUE 
+        INNER JOIN public.categories AS c ON p.category_id = c.id 
+        INNER JOIN public.marcas AS m ON p.brand_id = m.id`
 
-        const result = await pool.query(query, [offset])
-        const resultCount = await pool.query(queryCount)
-        const total = resultCount.rows[0].count
+        let where = ' WHERE p.state = TRUE '
+        const params = []
+
+        if (category_id) {
+            params.push(category_id)
+            where += `AND c.id = $${params.length} `
+        }
+
+        if (brand_id) {
+            params.push(brand_id)
+            where += `AND m.id = $${params.length} `
+        }
+
+        queryCountProduct += where
+        const resultCountProduct = await pool.query(queryCountProduct, params)
+
+        params.push(limit, offset)
+        query += where
+        query += `ORDER BY p.id LIMIT $${params.length - 1} OFFSET $${params.length}`
+
+        const result = await pool.query(query, params)
+        const total = Number(resultCountProduct.rows[0].count)
 
         return {
             products: result.rows,
