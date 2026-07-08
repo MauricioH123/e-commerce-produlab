@@ -1,6 +1,6 @@
-import { PoolClient, Query } from "pg";
+import { PoolClient } from "pg";
 import { pool } from "../config/database.js";
-import { ProductMain, TProduct } from "../dtos/createProduct.dto.js";
+import { ProductIndividual, ProductMain, TProduct } from "../dtos/createProduct.dto.js";
 
 type ProductosPage = {
     products: ProductMain[],
@@ -79,5 +79,25 @@ export class Product {
         const query = 'INSERT INTO public.products (name, description, category_id, price, brand_id, iva, creation_date, activation_date) VALUES($1, $2, $3, $4, $5, $6, NOW(), NOW()) RETURNING id, name, description, category_id, price, brand_id, iva;'
         const result = await client.query(query, values)
         return result.rows[0]
+    }
+
+    static async getById({ id }: { id: TProduct["id"] }): Promise<Omit<ProductIndividual, 'photos'> | null> {
+        const query = `
+        SELECT
+        p.id,
+        p.name AS name,
+        p.description,
+        p.price,
+        p.iva,
+        m.nombre AS brand,
+        c.name AS category
+        FROM public.products AS p
+        INNER JOIN public.marcas AS m ON p.brand_id = m.id
+        INNER JOIN public.categories AS c ON p.category_id = c.id
+        WHERE p.id = $1;`
+
+        const result = await pool.query(query, [id])
+
+        return result.rows[0] ?? null
     }
 }

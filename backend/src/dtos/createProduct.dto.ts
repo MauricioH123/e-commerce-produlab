@@ -2,6 +2,7 @@
 import { capitalizeWords } from "../utils/stringUtils.js"
 
 export type ProductPhoto = {
+    id?:number,
     url: string,
     order: number,
     is_main: boolean,
@@ -18,6 +19,17 @@ export type ProductMain = {
     id_image: number,
     url: string,
     alt_text: string
+}
+
+export type ProductIndividual = {
+    id: number,
+    name: string,
+    description: string,
+    price: number,
+    iva: boolean,
+    brand: string,
+    category: string,
+    photos: ProductPhoto[]
 }
 
 export type TProduct = {

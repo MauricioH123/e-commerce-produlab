@@ -1,10 +1,12 @@
 import { Product } from "../models/product.js";
 import { Request, Response, NextFunction } from "express";
 import { createdResponse, successResponse } from "../utils/responseHelper.js";
-import { validatePartialProduct } from "../schemas/products.js";
+import { validatePartialProduct, validateProduct } from "../schemas/products.js";
 import { InvalidError } from "../errors/InvalidError.js";
 import { RegisterProduct } from "../services/registerProduct.service.js";
 import { createProductDTO } from "../dtos/createProduct.dto.js";
+import { NotFoundError } from "../errors/NotFoundError.js";
+import { GetProduct } from "../services/getProduct.service.js";
 
 
 export class ProductoController {
@@ -27,7 +29,7 @@ export class ProductoController {
 
     static create = async (req: Request, res: Response, next: NextFunction) => {
         const body = req.body
-        const validate = validatePartialProduct(body)
+        const validate = validateProduct(body)
 
         if (validate.error) {
             return next(new InvalidError("Datos invalidos", validate.error.issues))
@@ -44,8 +46,23 @@ export class ProductoController {
         }
     }
 
-    static getById = (req: Request, res: Response, next: NextFunction) => {
+    static getById = async (req: Request, res: Response, next: NextFunction) => {
+        const product_id = Number(req.params.id)
+        const validate = validatePartialProduct({ id: product_id })
 
+        if (validate.error) {
+            return next(new InvalidError('Datos invalidos', validate.error.issues))
+        }
+
+        try {
+            const product = await GetProduct.execute({ product_id })
+
+            if (product === null) return next(new NotFoundError('Producto'))
+
+            return successResponse({ res, data: product })
+        } catch (e) {
+            next(e)
+        }
     }
 
     static update = (req: Request, res: Response, next: NextFunction) => {
