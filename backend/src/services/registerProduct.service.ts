@@ -27,13 +27,7 @@ export class RegisterProduct {
             return product
         } catch (e) {
             await client.query('ROLLBACK')
-
-            if (e instanceof DatabaseError) {
-                if (e.code === '23505') {
-                    throw new ConflictError('Ya existe un producto con esos datos')
-                }
-            }
-
+            
             throw e
         } finally {
             client.release()
