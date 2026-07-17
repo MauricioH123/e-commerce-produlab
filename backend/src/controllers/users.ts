@@ -43,4 +43,8 @@ export class UsuarioController {
         }
     }
 
+    static create = async (req: Request, res: Response, next: NextFunction) => {
+        // const 
+    }
+
 }

@@ -58,4 +58,8 @@ export class User {
         return result.rows[0] ?? null
     }
 
+    static async create(){
+        
+    }
+
 }
