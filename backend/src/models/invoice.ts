@@ -1,7 +1,8 @@
 import { pool } from "../config/database.js"
+import { InvoidInvoice } from "../dtos/CreateInvoice.dto.js"
 
 export class Invoice {
-    static async getByIdUser({ user_id, page, limit }: { user_id: string, page: number, limit: number }) {
+    static async getByIdUser({ user_id, page, limit }: { user_id: string, page: number, limit: number }): Promise<InvoidInvoice> {
         const offset = (page - 1) * limit
         const queryInvoices = `
         SELECT 

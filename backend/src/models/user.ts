@@ -1,5 +1,5 @@
 import { pool } from "../config/database.js";
-import { UsersPage } from "../dtos/createUser.dto.js";
+import { UserProfile, UsersPage } from "../dtos/createUser.dto.js";
 
 export class User {
 
@@ -39,7 +39,7 @@ export class User {
         }
     }
 
-    static async getById({ user_id }: { user_id: string }) {
+    static async getById({ user_id }: { user_id: string }):Promise<UserProfile> {
         const query = `
         SELECT 
         u.name, 

@@ -24,3 +24,12 @@ export type TUser = {
     identification: number,
     phone_number: string
 }
+
+export type UserProfile = {
+    name: string,
+    email: string,
+    identification_number: string,
+    rol: string,
+    state: boolean,
+    identification: string
+}
