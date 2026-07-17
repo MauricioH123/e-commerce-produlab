@@ -4,7 +4,7 @@ import { CategoryProps } from '../models/category.js'
 const categorySchema = z.object({
     id: z.number().int(),
     name: z.string(),
-    activa: z.boolean()
+    state: z.boolean()
 })
 
 export function validatePartialCategory(object:CategoryProps) {

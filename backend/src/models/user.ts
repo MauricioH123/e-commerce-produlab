@@ -39,4 +39,23 @@ export class User {
         }
     }
 
+    static async getById({ user_id }: { user_id: string }) {
+        const query = `
+        SELECT 
+        u.name, 
+        u.email, 
+        u.identification_number, 
+        r.name AS rol, 
+        u.state, 
+        i.name AS identification 
+        FROM public.users AS u
+        INNER JOIN public.roles AS r ON u.rol_id = r.id
+        INNER JOIN public.identifications AS i ON u.identification_id = i.id 
+        WHERE u.rol_id = 1 AND u.id = $1;`
+
+        const result = await pool.query(query, [user_id])
+
+        return result.rows[0] ?? null
+    }
+
 }

@@ -14,3 +14,13 @@ export type UsersPage = {
     page: number,
     totalPages: number
 }
+
+export type TUser = {
+    id: string,
+    name: string,
+    email: string,
+    identification_number: number,
+    password: string,
+    identification: number,
+    phone_number: string
+}
