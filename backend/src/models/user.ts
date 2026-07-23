@@ -72,7 +72,7 @@ export class User {
         const query = `
         INSERT INTO public.users(
         name, email, identification_number, password, identification_id, rol_id, state, phone_number, creation_date)
-        VALUES($1, $2, $3, $4, $5, 1, true, $6, NOW()) RETURNING id;`
+        VALUES($1, $2, $3, $4, $5, 1, true, $6, NOW()) RETURNING id, rol_id, name;`
 
         const result = await client.query(query, values)
 

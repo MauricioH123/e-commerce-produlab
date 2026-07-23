@@ -5,6 +5,8 @@ import { pool } from '../config/database.js';
 import { Address } from '../models/address.js';
 import { DatabaseError } from 'pg';
 import { ConflictError } from '../errors/ConflictError.js';
+import { generateAccessToken } from '../utils/jwt.js';
+import { createRefreshToken } from './token.service.js';
 
 
 export class RegisterUserService {
@@ -23,10 +25,24 @@ export class RegisterUserService {
             await client.query('BEGIN')
 
             const userWithoutAddress = await User.create({ user: userToCreate, client })
-            const user_id = userWithoutAddress.id
-            const address = await Address.create({ user: userToCreate, user_id, client })
 
-            client.query('COMMIT')
+            const user = {
+                id: userWithoutAddress.id,
+                rol_id: userWithoutAddress.rol_id,
+                name: userWithoutAddress.name
+            }
+
+            const address = await Address.create({ user: userToCreate, user_id: user.id, client })
+
+
+            const accessToken = generateAccessToken(user)
+
+            const refreshToken = await createRefreshToken(user.id)
+
+
+            await client.query('COMMIT')
+
+            return { user, accessToken, refreshToken }
 
         } catch (e) {
             await client.query('ROLLBACK')

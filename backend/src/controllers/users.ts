@@ -57,9 +57,19 @@ export class UsuarioController {
         const userDTO = createUserDTO(body)
 
         try {
-            const user = await RegisterUserService.execute(userDTO)
+            const { user, accessToken, refreshToken } = await RegisterUserService.execute(userDTO)
 
-            return createdResponse({ res })
+            const responseData = { user, accessToken }
+
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                secure: process.env.COOKIE_SECURE === 'false',
+                sameSite: 'strict',
+                maxAge: Number(process.env.JWT_REFRESH_EXPIRES_DAYS) * 24 * 60 * 60 * 1000,
+                path: '/api/auth/refresh'
+            })
+
+            return createdResponse({ res, data: responseData })
         } catch (e) {
             next(e)
         }
