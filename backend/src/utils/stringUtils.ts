@@ -1,7 +1,11 @@
-export function capitalizeWords(str:string):string{
+export function capitalizeWords(str: string): string {
     return str.trim()
-    .toLowerCase()
-    .split(/\s+/)  
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' '); 
+        .toLowerCase()
+        .split(/\s+/)
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+}
+
+export function removeSpaces(str: string) {
+    return str.replace(/\s/g, '')
 }

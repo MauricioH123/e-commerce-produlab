@@ -1,5 +1,6 @@
+import { Client, PoolClient } from "pg";
 import { pool } from "../config/database.js";
-import { UserProfile, UsersPage } from "../dtos/createUser.dto.js";
+import { TUser, UserProfile, UsersPage } from "../dtos/createUser.dto.js";
 
 export class User {
 
@@ -39,7 +40,7 @@ export class User {
         }
     }
 
-    static async getById({ user_id }: { user_id: string }):Promise<UserProfile> {
+    static async getById({ user_id }: { user_id: string }): Promise<UserProfile> {
         const query = `
         SELECT 
         u.name, 
@@ -58,8 +59,24 @@ export class User {
         return result.rows[0] ?? null
     }
 
-    static async create(){
-        
+    static async create({ user, client }: { user: Omit<TUser, 'addresses' | 'state' | 'rol_id' | 'id'>, client: PoolClient }) {
+        const values = [
+            user.name,
+            user.email,
+            user.identification_number,
+            user.password,
+            user.identification_id,
+            user.phone_number
+        ]
+
+        const query = `
+        INSERT INTO public.users(
+        name, email, identification_number, password, identification_id, rol_id, state, phone_number, creation_date)
+        VALUES($1, $2, $3, $4, $5, 1, true, $6, NOW()) RETURNING id;`
+
+        const result = await client.query(query, values)
+
+        return result.rows[0]
     }
 
 }

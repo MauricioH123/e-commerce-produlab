@@ -1,7 +1,7 @@
-import { DatabaseError } from "pg";
+
 import { pool } from "../config/database.js";
 import { TProduct } from "../dtos/createProduct.dto.js";
-import { ConflictError } from "../errors/ConflictError.js";
+
 import { Photos } from "../models/photos.js";
 import { Product } from "../models/product.js";
 
@@ -27,7 +27,7 @@ export class RegisterProduct {
             return product
         } catch (e) {
             await client.query('ROLLBACK')
-            
+
             throw e
         } finally {
             client.release()

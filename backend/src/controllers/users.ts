@@ -1,9 +1,11 @@
 import { User } from "../models/user.js"
 import { Request, Response, NextFunction } from "express"
-import { successResponse } from "../utils/responseHelper.js"
-import { validatePartialUser } from "../schemas/users.js"
+import { createdResponse, successResponse } from "../utils/responseHelper.js"
+import { userSchema, validateCreateUser, validatePartialUser } from "../schemas/users.js"
 import { InvalidError } from "../errors/InvalidError.js"
 import { GetUserProfile } from "../services/getUserProfile.service.js"
+import { createUserDTO } from "../dtos/createUser.dto.js"
+import { RegisterUserService } from "../services/registerUser.service.js"
 
 export class UsuarioController {
 
@@ -30,7 +32,7 @@ export class UsuarioController {
 
         const validate_id = validatePartialUser({ id: user_id })
 
-        if (validate_id.error) {
+        if (!validate_id.success) {
             return next(new InvalidError('Datos invalidos', validate_id.error.issues))
         }
 
@@ -44,7 +46,23 @@ export class UsuarioController {
     }
 
     static create = async (req: Request, res: Response, next: NextFunction) => {
-        // const 
+        const body = req.body
+
+        const validate = validateCreateUser(body)
+
+        if (!validate.success) {
+            return next(new InvalidError('Datos invalidos', validate.error.issues))
+        }
+
+        const userDTO = createUserDTO(body)
+
+        try {
+            const user = await RegisterUserService.execute(userDTO)
+
+            return createdResponse({ res })
+        } catch (e) {
+            next(e)
+        }
     }
 
 }

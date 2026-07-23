@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { TUser } from '../dtos/createUser.dto.js';
+import { addressSchemas, createAddressSchema } from './address.js';
 
 export const userSchema = z.object({
     id: z.uuid(),
@@ -25,10 +25,12 @@ export const userSchema = z.object({
         .regex(/^\d+$/, { message: 'El número de celular solo puede contener dígitos.' }),
 });
 
-// export function validateUser(object) {
-//     return userSchema.safeParse(object)
-// }
+export const createUserSchema = userSchema.omit({ id: true }).extend({ address: createAddressSchema })
 
-export function validatePartialUser(object: Partial<TUser>) {
+export function validateCreateUser(object: unknown){
+    return createUserSchema.safeParse(object)
+}
+
+export function validatePartialUser(object: unknown) {
     return userSchema.partial().safeParse(object)
 }

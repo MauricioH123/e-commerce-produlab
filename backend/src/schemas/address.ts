@@ -1,12 +1,14 @@
 import { z } from 'zod'
 
 export const addressSchemas = z.object({
-    ciudad: z.string().min(1, "La nombre es obligatoria").max(255, "El nombre debe tener maximo 255 caracteres"),
-    barrio: z.string().min(1, "El nombre es obligatorio").max(255, "El nombre debe tener maximo 255 caracteres"),
-    direccion: z.string().min(1, "La direccion es obligatoria").max(255, "La direccion debe tener maximo 255 caracteres"),
-    codigo_postal: z.string().min(1, "El codigo es obligatorio").max(255, "El codigo debe tener maximo 100 caracteres")
+    id: z.number().int().positive(),
+    neighborhood: z.string().min(1, { message: "El barrio es obligatorio." }).max(255, { message: "El barrio es muy largo" }),
+    address_line: z.string().min(1, { message: "La dirección es obligatoria." }).max(255, { message: "La dirección es muy larga." }),
+    is_main: z.boolean(),
+    user_id: z.uuid(),
+    department_id: z.number().int().positive(),
+    municipality_id: z.number().int().positive(),
+    instructions: z.string().optional()
 })
 
-export function validateAddress(object) {
-    return addressSchemas.safeParse(object)
-}
+export const createAddressSchema = addressSchemas.omit({id: true, user_id: true, is_main: true})

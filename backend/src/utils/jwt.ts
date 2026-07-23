@@ -6,6 +6,7 @@ type User = {
     id: string,
     rol_id: number
 }
+
 export function generateAccessToken(user: User) {
     return jwt.sign(
         { sub: user.id, rol_id: user.rol_id },
