@@ -7,6 +7,13 @@ type User = {
     rol_id: number
 }
 
+export interface AccessTokenPayload {
+    sub: string;
+    rol_id: number;
+    iat?: number;
+    exp?: number;
+}
+
 export function generateAccessToken(user: User) {
     return jwt.sign(
         { sub: user.id, rol_id: user.rol_id },
@@ -15,8 +22,8 @@ export function generateAccessToken(user: User) {
     );
 }
 
-export function verifyAccessToken(token: string): JwtPayload {
-    return jwt.verify(token, process.env.JWT_ACCESS_SECRET!) as JwtPayload;
+export function verifyAccessToken(token: string): AccessTokenPayload {
+    return jwt.verify(token, process.env.JWT_ACCESS_SECRET!) as AccessTokenPayload;
 }
 
 export function generateRefreshToken() {
