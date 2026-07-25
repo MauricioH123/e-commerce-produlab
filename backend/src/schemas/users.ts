@@ -27,8 +27,17 @@ export const userSchema = z.object({
 
 export const createUserSchema = userSchema.omit({ id: true }).extend({ address: createAddressSchema })
 
-export function validateCreateUser(object: unknown){
+export const loginUserSchema = z.object({
+    email: z.email({ message: "El correo electronico no es válido." }),
+    password: z.string().min(1, { message: "La contraseña es obligatoria." })
+})
+
+export function validateCreateUser(object: unknown) {
     return createUserSchema.safeParse(object)
+}
+
+export function validateLoginUser(object: undefined) {
+    return loginUserSchema.safeParse(object)
 }
 
 export function validatePartialUser(object: unknown) {

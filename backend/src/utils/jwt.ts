@@ -1,8 +1,8 @@
-import jwt, { JwtPayload } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import type { StringValue } from 'ms'
 import { createHash, randomBytes } from 'node:crypto';
 
-type User = {
+export type User = {
     id: string,
     rol_id: number
 }

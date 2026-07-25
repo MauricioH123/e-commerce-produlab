@@ -37,7 +37,7 @@ export class RegisterUserService {
 
             const accessToken = generateAccessToken(user)
 
-            const refreshToken = await createRefreshToken(user.id)
+            const refreshToken = await createRefreshToken(user.id, client)
 
 
             await client.query('COMMIT')

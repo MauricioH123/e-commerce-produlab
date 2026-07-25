@@ -8,6 +8,13 @@ export type UserWithOrders = {
     number_of_orders: string
 }
 
+export type UserLogin ={
+    password: string,
+    state: boolean,
+    id: string,
+    rol_id: number
+}
+
 export type UsersPage = {
     users: UserWithOrders[],
     total: number,

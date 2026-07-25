@@ -7,6 +7,7 @@ import { categoryRouter } from './routes/categories.js';
 import { productsRouter } from './routes/products.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import './jobs/cleanIdempotencyKeys.js';
+import cookieParser from 'cookie-parser';
 
 
 const PORT = process.env.PORT ?? 3000;
@@ -15,6 +16,7 @@ const app = express()
 
 app.use(json())
 app.use(corsMiddleware())
+app.use(cookieParser());
 
 app.use('/users', usersRouter)
 app.use('/categories', categoryRouter)

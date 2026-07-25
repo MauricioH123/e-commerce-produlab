@@ -1,6 +1,7 @@
 import { Client, PoolClient } from "pg";
 import { pool } from "../config/database.js";
-import { TUser, UserProfile, UsersPage } from "../dtos/createUser.dto.js";
+import { TUser, UserLogin, UserProfile, UsersPage } from "../dtos/createUser.dto.js";
+import { email } from "zod";
 
 export class User {
 
@@ -77,6 +78,23 @@ export class User {
         const result = await client.query(query, values)
 
         return result.rows[0]
+    }
+
+    static async findByEmail(email: string): Promise<UserLogin | null> {
+        const query = `SELECT password, state, id, rol_id  FROM public.user WHERE email = $1;`
+
+        const result = await pool.query(query, [email])
+
+        return result.rows[0] ?? null
+    }
+
+        static async findById(id: string) {
+        const query = `SELECT id, rol_id FROM public.user WHERE id = $1;`
+
+        const result = await pool.query(query, [id])
+
+        return result.rows[0]
+
     }
 
 }
