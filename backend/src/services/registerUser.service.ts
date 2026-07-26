@@ -7,6 +7,7 @@ import { DatabaseError } from 'pg';
 import { ConflictError } from '../errors/ConflictError.js';
 import { generateAccessToken } from '../utils/jwt.js';
 import { createRefreshToken } from './token.service.js';
+import { Auth } from '../models/auth.js';
 
 
 export class RegisterUserService {
@@ -24,7 +25,7 @@ export class RegisterUserService {
         try {
             await client.query('BEGIN')
 
-            const userWithoutAddress = await User.create({ user: userToCreate, client })
+            const userWithoutAddress = await Auth.create({ user: userToCreate, client })
 
             const user = {
                 id: userWithoutAddress.id,

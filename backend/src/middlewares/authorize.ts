@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-export function authorize(...allowedRoles: Array<number>) {
+export function authorize(...allowedRoles: number[]) {
     return (req: Request, res: Response, next: NextFunction) => {
         if (!req.user) return res.status(401).json({ message: 'No autenticado' })
         if (!allowedRoles.includes(req.user.rol_id)) {

@@ -1,8 +1,9 @@
 import { Router } from "express";
-import {UsuarioController} from "../controllers/users.js";
+import { UserController } from "../controllers/users.js";
+import { authenticate } from "../middlewares/authenticate.js";
+import { authorize } from "../middlewares/authorize.js";
 
 export const usersRouter = Router()
 
-usersRouter.get('/', UsuarioController.getAll)
-usersRouter.get('/:id', UsuarioController.getById)
-usersRouter.post('/', UsuarioController.create)
+usersRouter.get('/', authenticate, authorize(1), UserController.getAll)
+usersRouter.get('/:id', UserController.getById)

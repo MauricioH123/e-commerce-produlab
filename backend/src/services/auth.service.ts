@@ -1,14 +1,14 @@
 import { InactiveUserError } from "../errors/InactiveUserError.js";
 import { InvalidCredentialsError } from "../errors/InvalidCredentialsError.js";
-import { User } from "../models/user.js";
 import bcrypt from 'bcrypt';
 import { generateAccessToken } from "../utils/jwt.js";
 import { createRefreshToken } from "./token.service.js";
 import { pool } from "../config/database.js";
+import { Auth } from "../models/auth.js";
 
-export class Auth {
+export class AuthServie {
     static async loginUser(body: { email: string, password: string }) {
-        const user = await User.findByEmail(body.email)
+        const user = await Auth.findByEmail(body.email)
 
         if (!user) {
             throw new InvalidCredentialsError()

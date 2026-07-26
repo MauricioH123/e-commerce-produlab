@@ -8,6 +8,7 @@ import { productsRouter } from './routes/products.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import './jobs/cleanIdempotencyKeys.js';
 import cookieParser from 'cookie-parser';
+import { authRouter } from './routes/auth.js';
 
 
 const PORT = process.env.PORT ?? 3000;
@@ -18,6 +19,7 @@ app.use(json())
 app.use(corsMiddleware())
 app.use(cookieParser());
 
+app.use('/auth', authRouter)
 app.use('/users', usersRouter)
 app.use('/categories', categoryRouter)
 app.use('/products', productsRouter)
