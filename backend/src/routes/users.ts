@@ -5,5 +5,5 @@ import { authorize } from "../middlewares/authorize.js";
 
 export const usersRouter = Router()
 
-usersRouter.get('/', authenticate, authorize(1), UserController.getAll)
-usersRouter.get('/:id', UserController.getById)
+usersRouter.get('/', authenticate, authorize(2), UserController.getAll)
+usersRouter.get('/:id', authenticate, UserController.getById)
