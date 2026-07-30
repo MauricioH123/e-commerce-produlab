@@ -25,7 +25,7 @@ export class Auth {
     }
 
     static async findByEmail(email: string): Promise<UserLogin | null> {
-        const query = `SELECT password, state, id, rol_id  FROM public.user WHERE email = $1;`
+        const query = `SELECT password, state, id, rol_id FROM public.users WHERE email = $1;`
 
         const result = await pool.query(query, [email])
 
@@ -33,7 +33,7 @@ export class Auth {
     }
 
     static async findById(id: string) {
-        const query = `SELECT id, rol_id FROM public.user WHERE id = $1;`
+        const query = `SELECT id, rol_id FROM public.users WHERE id = $1;`
 
         const result = await pool.query(query, [id])
 
