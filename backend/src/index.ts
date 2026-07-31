@@ -9,12 +9,14 @@ import { errorHandler } from './middlewares/errorHandler.js';
 import './jobs/cleanIdempotencyKeys.js';
 import cookieParser from 'cookie-parser';
 import { authRouter } from './routes/auth.js';
+import helmet from 'helmet';
 
 
 const PORT = process.env.PORT ?? 3000;
 
 const app = express()
 
+app.use(helmet())
 app.use(json())
 app.use(corsMiddleware())
 app.use(cookieParser());
