@@ -7,7 +7,8 @@ import { RegisterProduct } from "../services/registerProduct.service.js";
 import { createProductDTO } from "../dtos/createProduct.dto.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
 import { GetProduct } from "../services/getProduct.service.js";
-import { softDeleteProduct } from "../services/softDeleteProduct.service.js";
+import { SoftDeleteProduct } from "../services/softDeleteProduct.service.js";
+import { ActivateProduct } from "../services/activateProduct.service.js";
 
 
 export class ProductoController {
@@ -79,7 +80,7 @@ export class ProductoController {
         }
 
         try {
-            const result = await softDeleteProduct.execute(product_id)
+            const result = await SoftDeleteProduct.execute(product_id)
             return successResponse({ res, data: result })
         } catch (e) {
             next(e)
@@ -87,8 +88,21 @@ export class ProductoController {
 
     }
 
-    static activate = (req: Request, res: Response, next: NextFunction) => {
+    static activate = async (req: Request, res: Response, next: NextFunction) => {
+        const product_id = Number(req.params.id)
+        const validate = validatePartialProduct({ id: product_id })
 
+        if (validate.error) {
+            return next(new InvalidError('Datos invalidos', validate.error.issues))
+        }
+
+        try {
+            const result = await ActivateProduct.execute(product_id)
+
+            return successResponse({ res, data: result })
+        } catch (e) {
+            next(e)
+        }
     }
 
 

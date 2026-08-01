@@ -1,45 +1,41 @@
 import { pool } from "../config/database.js";
-import { InvalidError } from "../errors/InvalidError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
 import { Product } from "../models/product.js";
 
-export class SoftDeleteProduct {
+export class ActivateProduct {
     static async execute(product_id: number) {
-
         const client = await pool.connect()
 
         try {
-
             await client.query('BEGIN')
 
-            const product = await Product.productState({ product_id, client })
+            const productState = await Product.productState({ product_id, client })
 
-            if (!product) {
-                throw new NotFoundError('Producto')
+            if (!productState) {
+                throw new NotFoundError()
             }
 
-            if (product.state === false) {
-                await client.query('COMMIT')
+            if (productState.state === true) {
                 return {
                     id: product_id,
-                    message: "El producto ya se encontroba eliminado"
+                    message: 'El producto ya se encontroba activado'
                 }
             }
 
-            const deleteProduct = await Product.delete({ product_id, client })
+            const activateProduct = await Product.activate({ product_id, client })
 
             await client.query('COMMIT')
 
             return {
-                id: deleteProduct.id,
-                message: "Producto eliminado exitosamente"
+                id: activateProduct.id,
+                message: 'Producto activado exitosamente'
             }
+
         } catch (e) {
             await client.query('ROLLBACK')
             throw e
         } finally {
             client.release()
         }
-
     }
 }

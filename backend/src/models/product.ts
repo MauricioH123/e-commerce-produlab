@@ -120,4 +120,14 @@ export class Product {
 
         return result.rows[0]
     }
+
+    static async activate({ product_id, client }: { product_id: number, client: PoolClient }): Promise<Pick<TProduct, 'id'>> {
+        const query = `
+        UPDATE public.products
+        SET state = true, activation_date = NOW()
+        WHERE id = $1 AND state = false RETURNING id;`
+
+        const result = await client.query(query, [product_id])
+        return result.rows[0]
+    }
 }
