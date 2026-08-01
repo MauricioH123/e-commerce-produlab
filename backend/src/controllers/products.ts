@@ -7,6 +7,7 @@ import { RegisterProduct } from "../services/registerProduct.service.js";
 import { createProductDTO } from "../dtos/createProduct.dto.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
 import { GetProduct } from "../services/getProduct.service.js";
+import { softDeleteProduct } from "../services/softDeleteProduct.service.js";
 
 
 export class ProductoController {
@@ -69,7 +70,20 @@ export class ProductoController {
 
     }
 
-    static delete = (req: Request, res: Response, next: NextFunction) => {
+    static delete = async (req: Request, res: Response, next: NextFunction) => {
+        const product_id = Number(req.params.id)
+        const validate = validatePartialProduct({ id: product_id })
+
+        if (validate.error) {
+            return next(new InvalidError('Datos invalidos', validate.error.issues))
+        }
+
+        try {
+            const result = await softDeleteProduct.execute(product_id)
+            return successResponse({ res, data: result })
+        } catch (e) {
+            next(e)
+        }
 
     }
 

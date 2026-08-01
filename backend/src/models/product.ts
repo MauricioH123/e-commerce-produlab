@@ -100,4 +100,24 @@ export class Product {
 
         return result.rows[0] ?? null
     }
+
+    static async productState({ product_id, client }: { product_id: number, client: PoolClient }): Promise<Pick<TProduct, 'state'> | null> {
+        const query = `SELECT state FROM public.products WHERE id = $1;`
+
+        const result = await client.query(query, [product_id])
+
+        return result.rows[0] || null
+    }
+
+
+    static async delete({ product_id, client }: { product_id: number, client: PoolClient }): Promise<Pick<TProduct, 'id'>> {
+        const query = `
+        UPDATE public.products
+        SET state = false, elimination_date = NOW()
+        WHERE id = $1 AND state = true RETURNING id;`
+
+        const result = await client.query(query, [product_id])
+
+        return result.rows[0]
+    }
 }
