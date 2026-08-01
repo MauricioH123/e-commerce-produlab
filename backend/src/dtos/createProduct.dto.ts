@@ -44,6 +44,17 @@ export type TProduct = {
     brand_id: number
 }
 
+export type ProductUpate = {
+    id: number,
+    name?: string,
+    description?: string,
+    category_id?: number,
+    state?: boolean,
+    iva?: boolean,
+    price?: number,
+    brand_id?: number
+}
+
 export function createProductDTO(objet: Omit<TProduct, 'id'>): Omit<TProduct, 'id'> {
     return {
         name: capitalizeWords(objet.name),
@@ -61,11 +72,22 @@ export function updateProductDTO(object: Partial<TProduct>): Partial<TProduct> {
     return {
         ...(object.name && { name: capitalizeWords(object.name) }),
         ...(object.description && { description: capitalizeWords(object.description) }),
-        ...(object.photos && { photos: object.photos }),
         ...(object.category_id && { category_id: object.category_id }),
-        ...(object.state !== undefined && { state: object.state }),
         ...(object.iva !== undefined && { iva: object.iva }),
         ...(object.price !== undefined && { price: object.price }),
         ...(object.brand_id && { brand_id: object.brand_id })
     }
 }
+
+// export function updateProductDTO(object: Partial<TProduct>): Partial<TProduct> {
+//     return {
+//         ...(object.name && { name: capitalizeWords(object.name) }),
+//         ...(object.description && { description: capitalizeWords(object.description) }),
+//         ...(object.photos && { photos: object.photos }),
+//         ...(object.category_id && { category_id: object.category_id }),
+//         ...(object.state !== undefined && { state: object.state }),
+//         ...(object.iva !== undefined && { iva: object.iva }),
+//         ...(object.price !== undefined && { price: object.price }),
+//         ...(object.brand_id && { brand_id: object.brand_id })
+//     }
+// }

@@ -1,8 +1,8 @@
 import { z } from 'zod'
-import { TProduct } from '../dtos/createProduct.dto.js'
+import { ProductUpate, TProduct } from '../dtos/createProduct.dto.js'
 
 const productSchema = z.object({
-    id: z.number().int(),
+    id: z.number().int().positive(),
     name: z.string(),
     description: z.string(),
     photo: z.array(z.object({ url: z.string(), order: z.number().int(), is_main: z.boolean, alt_text: z.string() })),
@@ -13,9 +13,14 @@ const productSchema = z.object({
     brand_id: z.number().int(),
 })
 
+const productUpdateSchema = productSchema.omit({ photo: true, id: true }).partial().extend({id: z.number().int().positive()})
 
 export function validateProduct(object: Omit<TProduct, 'id'>) {
     return productSchema.safeParse(object)
+}
+
+export function validateUpdateProduct(object: ProductUpate) {
+    return productUpdateSchema.safeParse(object)
 }
 
 export function validatePartialProduct(object: Partial<TProduct>) {

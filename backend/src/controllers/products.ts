@@ -1,14 +1,15 @@
 import { Product } from "../models/product.js";
 import { Request, Response, NextFunction } from "express";
 import { createdResponse, successResponse } from "../utils/responseHelper.js";
-import { validatePartialProduct, validateProduct } from "../schemas/products.js";
+import { validatePartialProduct, validateProduct, validateUpdateProduct } from "../schemas/products.js";
 import { InvalidError } from "../errors/InvalidError.js";
 import { RegisterProduct } from "../services/registerProduct.service.js";
-import { createProductDTO } from "../dtos/createProduct.dto.js";
+import { createProductDTO, updateProductDTO } from "../dtos/createProduct.dto.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
 import { GetProduct } from "../services/getProduct.service.js";
 import { SoftDeleteProduct } from "../services/softDeleteProduct.service.js";
 import { ActivateProduct } from "../services/activateProduct.service.js";
+import { UpdateProduct } from "../services/updateProduct.service.js";
 
 
 export class ProductoController {
@@ -33,7 +34,7 @@ export class ProductoController {
         const body = req.body
         const validate = validateProduct(body)
 
-        if (validate.error) {
+        if (!validate.success) {
             return next(new InvalidError("Datos invalidos", validate.error.issues))
         }
 
@@ -52,7 +53,7 @@ export class ProductoController {
         const product_id = Number(req.params.id)
         const validate = validatePartialProduct({ id: product_id })
 
-        if (validate.error) {
+        if (!validate.success) {
             return next(new InvalidError('Datos invalidos', validate.error.issues))
         }
 
@@ -67,7 +68,30 @@ export class ProductoController {
         }
     }
 
-    static update = (req: Request, res: Response, next: NextFunction) => {
+    static update = async (req: Request, res: Response, next: NextFunction) => {
+        const body = {
+            ...req.body,
+            id: Number(req.params.id)
+        }
+
+        if (Object.keys(body).length === 1) {
+            return next(new InvalidError('Datos invalidos', 'No hay campos para actualizar'))
+        }
+
+        const validate = validateUpdateProduct(body)
+
+        if (!validate.success) {
+            return next(new InvalidError('Datos invalidos', validate.error.issues))
+        }
+
+        const productDTO = updateProductDTO(body)
+
+        try {
+            const updateProduct = await UpdateProduct.execute({dataProduct: productDTO, product_id: body.id})
+            return successResponse({ res, data: updateProduct })
+        } catch (e) {
+            next(e)
+        }
 
     }
 
@@ -75,7 +99,7 @@ export class ProductoController {
         const product_id = Number(req.params.id)
         const validate = validatePartialProduct({ id: product_id })
 
-        if (validate.error) {
+        if (!validate.success) {
             return next(new InvalidError('Datos invalidos', validate.error.issues))
         }
 
@@ -92,14 +116,14 @@ export class ProductoController {
         const product_id = Number(req.params.id)
         const validate = validatePartialProduct({ id: product_id })
 
-        if (validate.error) {
+        if (!validate.success) {
             return next(new InvalidError('Datos invalidos', validate.error.issues))
         }
 
         try {
-            const result = await ActivateProduct.execute(product_id)
+            const product = await ActivateProduct.execute(product_id)
 
-            return successResponse({ res, data: result })
+            return successResponse({ res, data: product })
         } catch (e) {
             next(e)
         }

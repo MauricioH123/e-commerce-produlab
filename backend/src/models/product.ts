@@ -1,6 +1,6 @@
 import { PoolClient } from "pg";
 import { pool } from "../config/database.js";
-import { ProductIndividual, ProductMain, TProduct } from "../dtos/createProduct.dto.js";
+import { ProductIndividual, ProductMain, ProductUpate, TProduct } from "../dtos/createProduct.dto.js";
 
 type ProductosPage = {
     products: ProductMain[],
@@ -128,6 +128,30 @@ export class Product {
         WHERE id = $1 AND state = false RETURNING id;`
 
         const result = await client.query(query, [product_id])
+        return result.rows[0]
+    }
+
+    static async update({ dataProduct, client, product_id }: { dataProduct: Omit<ProductUpate, 'id' | 'state'>, client: PoolClient, product_id: number }) {
+
+        const entries = Object.entries(dataProduct)
+
+        const fields = entries.map(([key], index) => `${key} = $${index + 1}`).join(", ")
+
+        const values = entries.map(([, value]) => value)
+
+        values.push(product_id)
+
+        const query = `
+        UPDATE public.products
+        SET ${fields}, 
+        update_date = NOW()
+        WHERE id = $${values.length}
+        RETURNING id;
+        `
+
+        const result = await client.query(query, values)
+
+
         return result.rows[0]
     }
 }
