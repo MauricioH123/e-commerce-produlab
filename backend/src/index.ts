@@ -10,6 +10,7 @@ import './jobs/cleanIdempotencyKeys.js';
 import cookieParser from 'cookie-parser';
 import { authRouter } from './routes/auth.js';
 import helmet from 'helmet';
+import { addresRouter } from './routes/address.js';
 
 
 const PORT = process.env.PORT ?? 3000;
@@ -25,6 +26,7 @@ app.use('/auth', authRouter)
 app.use('/users', usersRouter)
 app.use('/categories', categoryRouter)
 app.use('/products', productsRouter)
+app.use('/address', addresRouter)
 
 swaggerDocs(app)
 

@@ -84,10 +84,10 @@ export class ProductoController {
             return next(new InvalidError('Datos invalidos', validate.error.issues))
         }
 
-        const productDTO = updateProductDTO(body)
+        const productDTO = updateProductDTO(validate.data)
 
         try {
-            const updateProduct = await UpdateProduct.execute({dataProduct: productDTO, product_id: body.id})
+            const updateProduct = await UpdateProduct.execute({ dataProduct: productDTO, product_id: body.id })
             return successResponse({ res, data: updateProduct })
         } catch (e) {
             next(e)
