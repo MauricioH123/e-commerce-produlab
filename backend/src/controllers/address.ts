@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from "express"
 import { InvalidError } from "../errors/InvalidError.js"
 import { validateUpdateAddress } from "../schemas/address.js"
 import { updateAddress } from "../dtos/createAddress.dto.js"
-import { Address } from "../models/address.js"
 import { UpdateAddress } from "../services/updateAddress.service.js"
 import { successResponse } from "../utils/responseHelper.js"
 

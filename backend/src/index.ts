@@ -11,6 +11,7 @@ import cookieParser from 'cookie-parser';
 import { authRouter } from './routes/auth.js';
 import helmet from 'helmet';
 import { addresRouter } from './routes/address.js';
+import { brandsRoute } from './routes/brands.js';
 
 
 const PORT = process.env.PORT ?? 3000;
@@ -27,6 +28,7 @@ app.use('/users', usersRouter)
 app.use('/categories', categoryRouter)
 app.use('/products', productsRouter)
 app.use('/address', addresRouter)
+app.use('/brands', brandsRoute)
 
 swaggerDocs(app)
 
