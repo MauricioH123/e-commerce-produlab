@@ -4,7 +4,7 @@ import { CartItem } from "../dtos/createCart.dto.js"
 export class Carts {
     static async getByIdUser(user_id: string): Promise<CartItem[] | null> {
         const query = `
-        SELECT ci.id, p.name, pi.url AS image_url, ci.amount, p.price
+        SELECT ci.id, p.id AS product_id, p.name, pi.url AS image_url, ci.amount, p.price
         FROM public.carts AS c
         INNER JOIN public.cart_items AS ci ON c.id = ci.cart_id
         INNER JOIN public.products AS p ON ci.product_id = p.id
