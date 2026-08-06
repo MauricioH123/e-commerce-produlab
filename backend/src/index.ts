@@ -12,6 +12,7 @@ import { authRouter } from './routes/auth.js';
 import helmet from 'helmet';
 import { addresRouter } from './routes/address.js';
 import { brandsRoute } from './routes/brands.js';
+import { cartsRouter } from './routes/carts.js';
 
 
 const PORT = process.env.PORT ?? 3000;
@@ -29,6 +30,7 @@ app.use('/categories', categoryRouter)
 app.use('/products', productsRouter)
 app.use('/address', addresRouter)
 app.use('/brands', brandsRoute)
+app.use('/carts', cartsRouter)
 
 swaggerDocs(app)
 
