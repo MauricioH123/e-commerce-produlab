@@ -7,3 +7,9 @@ export type CartItem = {
     price: number
 }
 
+export type UpdateCartItem = {
+    id: number,
+    product_id: number,
+    amount: number
+}
+

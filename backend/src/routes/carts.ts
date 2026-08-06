@@ -6,3 +6,4 @@ import { authorize } from "../middlewares/authorize.js";
 export const cartsRouter = Router()
 
 cartsRouter.get('/', authenticate, authorize(1), CartsController.getByIdUser)
+cartsRouter.patch('/update', authenticate, authorize(1), CartsController.updateQuantityByUserId)
