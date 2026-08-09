@@ -34,4 +34,15 @@ export class InventoryMovements {
 
         return result.rows[0]
     }
+
+    static async increaseMovement({ product_id, amount, user_id, client }: { product_id: number, amount: number, user_id: string, client: PoolClient }): Promise<{ amount: number }> {
+        const query = `
+        INSERT INTO public.inventory_movements(
+        product_id, type, amount, user_id)
+        VALUES ($1, ${OPERATIONS.addition}, $2, $3) RETURNING amount;`
+
+        const result = await client.query(query, [product_id, amount, user_id])
+
+        return result.rows[0]
+    }
 }

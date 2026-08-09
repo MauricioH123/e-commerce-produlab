@@ -31,6 +31,7 @@ export class ProductoController {
     }
 
     static create = async (req: Request, res: Response, next: NextFunction) => {
+        const user_id = String(req.user.sub)
         const body = req.body
         const validate = validateProduct(body)
 
@@ -38,10 +39,10 @@ export class ProductoController {
             return next(new InvalidError("Datos invalidos", validate.error.issues))
         }
 
-        const productDTO = createProductDTO(body)
+        const productDTO = createProductDTO(validate.data)
 
         try {
-            const product = await RegisterProduct.execute(productDTO)
+            const product = await RegisterProduct.execute(productDTO, user_id)
 
             return createdResponse({ res, data: product })
         } catch (e) {

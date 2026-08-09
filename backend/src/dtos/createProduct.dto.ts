@@ -41,7 +41,8 @@ export type TProduct = {
     state: boolean,
     iva: boolean,
     price: number,
-    brand_id: number
+    brand_id: number,
+    amount: number
 }
 
 export type ProductUpate = {
@@ -64,7 +65,8 @@ export function createProductDTO(objet: Omit<TProduct, 'id'>): Omit<TProduct, 'i
         state: objet.state,
         iva: objet.iva,
         price: objet.price,
-        brand_id: objet.brand_id
+        brand_id: objet.brand_id,
+        amount: objet.amount
     }
 }
 
