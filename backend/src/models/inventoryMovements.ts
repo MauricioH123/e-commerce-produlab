@@ -1,11 +1,11 @@
-import { PoolClient } from "pg"
+import { Pool, PoolClient } from "pg"
 import { pool } from "../config/database.js"
 import { MovementType, OPERATIONS } from "../dtos/createInventoryMovements.js"
 
 
 
 export class InventoryMovements {
-    static async getStock(product_id: number, client: PoolClient): Promise<{ product_id: number, total_amount: number }> {
+    static async getStock(product_id: number, executor: Pool | PoolClient = pool): Promise<{ product_id: number, total_amount: number }> {
         const query = `
         SELECT 
         product_id,
@@ -19,7 +19,7 @@ export class InventoryMovements {
         WHERE product_id = $1
         GROUP BY product_id;`
 
-        const result = await client.query(query, [product_id])
+        const result = await executor.query(query, [product_id])
 
         return result.rows[0]
     }

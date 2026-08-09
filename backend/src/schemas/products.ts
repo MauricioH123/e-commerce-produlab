@@ -13,7 +13,9 @@ const productSchema = z.object({
     brand_id: z.number().int(),
 })
 
-const productUpdateSchema = productSchema.omit({ photo: true, id: true }).partial().extend({id: z.number().int().positive()})
+const productUpdateSchema = productSchema.omit({ photo: true, id: true }).partial().extend({ id: z.number().int().positive() })
+
+const productIdSchema = productSchema.omit({ name: true, description: true, photo: true, category_id: true, state: true, iva: true, price: true, brand_id: true }).strict()
 
 export function validateProduct(object: Omit<TProduct, 'id'>) {
     return productSchema.safeParse(object)
@@ -25,4 +27,8 @@ export function validateUpdateProduct(object: ProductUpate) {
 
 export function validatePartialProduct(object: Partial<TProduct>) {
     return productSchema.partial().safeParse(object)
+}
+
+export function validateProductId(object: { id: number }) {
+    return productIdSchema.safeParse(object)
 }
