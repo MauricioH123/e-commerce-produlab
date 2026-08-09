@@ -2,8 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import { validateCartItems, validateIdUser, validateInsertItem, validateItemId } from "../schemas/carts.js";
 import { InvalidError } from "../errors/InvalidError.js";
 import { Carts } from "../models/carts.js";
-import { deletedResponse, successResponse } from "../utils/responseHelper.js";
+import { createdResponse, deletedResponse, successResponse } from "../utils/responseHelper.js";
 import { UpdateCart } from "../services/updateCart.service.js";
+import { RegisterItemCart } from "../services/registerItemCart.service.js";
 
 export class CartsController {
     static getByIdUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -73,10 +74,12 @@ export class CartsController {
             return next(new InvalidError('Datos invalidos', validate.error.issues))
         }
 
-        try{
-            const item = []
-        }catch(e){
+        try {
+            const item = await RegisterItemCart.execute({ user_id, item: validate.data })
 
+            return createdResponse({ res, data: item })
+        } catch (e) {
+            next(e)
         }
     }
 }

@@ -1,6 +1,6 @@
 import { PoolClient } from "pg"
 import { pool } from "../config/database.js"
-import { CartItem, UpdateCartItem } from "../dtos/createCart.dto.js"
+import { CartItem, InsertItemIntoCart, UpdateCartItem } from "../dtos/createCart.dto.js"
 
 export class Carts {
     static async getByIdUser(user_id: string): Promise<CartItem[] | null> {
@@ -42,7 +42,22 @@ export class Carts {
         return result.rows[0]
     }
 
-    static async insertItem(){
-        const query = `INSERT`
+    static async insertItem({ cart_id, product_id, amount }: InsertItemIntoCart, client: PoolClient): Promise<{ product_id: number, amount: number }> {
+        const query = `
+        INSERT INTO 
+        public.cart_items(cart_id, product_id, amount) 
+        VALUES($1, $2, $3) RETURNING product_id, amount;`
+
+        const result = await client.query(query, [cart_id, product_id, amount])
+
+        return result.rows[0]
+    }
+
+    static async createCart(user_id: string, client: PoolClient): Promise<{ id: number } > {
+        const query = `INSERT INTO public.carts(user_id) VALUES($1) RETURNING id;`
+
+        const result = await client.query(query, [user_id])
+
+        return result.rows[0] 
     }
 }

@@ -14,6 +14,7 @@ export type UpdateCartItem = {
 }
 
 export type InsertItemIntoCart = {
+    cart_id: number,
     product_id: number,
     amount: number
 }

@@ -29,6 +29,6 @@ export function validateItemId(object: { product_id: number }) {
     return deleteItemSchema.safeParse(object)
 }
 
-export function validateInsertItem(object: InsertItemIntoCart) {
+export function validateInsertItem(object: Omit<InsertItemIntoCart, 'cart_id'>) {
     return insertItemSchema.safeParse(object)
 }
