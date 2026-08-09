@@ -13,3 +13,8 @@ export type UpdateCartItem = {
     amount: number
 }
 
+export type InsertItemIntoCart = {
+    product_id: number,
+    amount: number
+}
+

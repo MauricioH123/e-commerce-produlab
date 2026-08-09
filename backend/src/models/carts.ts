@@ -23,12 +23,26 @@ export class Carts {
         UPDATE public.cart_items
         SET amount = $1
         WHERE 
-        cart_id = (SELECT id FROM public.carts WHERE user_id = $2) 
+        cart_id = (SELECT id FROM public.carts WHERE user_id = $2 AND state = true) 
         AND 
         product_id = $3 RETURNING id, product_id, amount;`
 
         const result = await client.query(query, [amount, user_id, product_id])
 
         return result.rows[0] || null
+    }
+
+    static async deleteItemById({ user_id, product_id }: { user_id: string, product_id: number }) {
+        const query = `
+        DELETE FROM public.cart_items
+        WHERE cart_id = (SELECT id FROM public.carts WHERE user_id = $1 AND state = true) AND product_id = $2;`
+
+        const result = await pool.query(query, [user_id, product_id])
+
+        return result.rows[0]
+    }
+
+    static async insertItem(){
+        const query = `INSERT`
     }
 }
