@@ -1,5 +1,10 @@
 import { capitalizeWords, removeSpaces } from "../utils/stringUtils.js";
 
+export const USERS = {
+    client: 1,
+    admin: 2
+}
+
 export type UserWithOrders = {
     id: number,
     name: string,

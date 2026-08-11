@@ -89,10 +89,10 @@ export class Product {
         p.description,
         p.price,
         p.iva,
-        m.nombre AS brand,
+        b.name AS brand,
         c.name AS category
         FROM public.products AS p
-        INNER JOIN public.marcas AS m ON p.brand_id = m.id
+        INNER JOIN public.brands AS b ON p.brand_id = b.id
         INNER JOIN public.categories AS c ON p.category_id = c.id
         WHERE p.id = $1;`
 
