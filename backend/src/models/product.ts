@@ -26,13 +26,13 @@ export class Product {
         pi.url, 
         pi.alt_text 
         FROM public.products AS p 
-        INNER JOIN public.product_images AS pi ON p.id = pi.producto_id AND pi.is_main = TRUE 
+        INNER JOIN public.product_images AS pi ON p.id = pi.product_id AND pi.is_main = TRUE 
         INNER JOIN public.categories AS c ON p.category_id = c.id 
         INNER JOIN public.marcas AS m ON p.brand_id = m.id`
 
         let queryCountProduct = `
         SELECT COUNT(*)FROM public.products AS p 
-        INNER JOIN public.product_images AS pi ON p.id = pi.producto_id AND pi.is_main = TRUE 
+        INNER JOIN public.product_images AS pi ON p.id = pi.product_id AND pi.is_main = TRUE 
         INNER JOIN public.categories AS c ON p.category_id = c.id 
         INNER JOIN public.marcas AS m ON p.brand_id = m.id`
 

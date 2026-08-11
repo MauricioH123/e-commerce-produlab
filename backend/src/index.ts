@@ -14,6 +14,7 @@ import { addresRouter } from './routes/address.js';
 import { brandsRoute } from './routes/brands.js';
 import { cartsRouter } from './routes/carts.js';
 import { inventoryRouter } from './routes/inventory.js';
+import { photosRouter } from './routes/photos.js';
 
 
 const PORT = process.env.PORT ?? 3000;
@@ -33,6 +34,7 @@ app.use('/address', addresRouter)
 app.use('/brands', brandsRoute)
 app.use('/carts', cartsRouter)
 app.use('/inventary', inventoryRouter)
+app.use('/photos', photosRouter)
 
 swaggerDocs(app)
 

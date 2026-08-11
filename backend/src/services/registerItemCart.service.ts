@@ -21,7 +21,7 @@ export class RegisterItemCart {
         p.price,
         pi.url
         FROM public.products AS p
-        INNER JOIN public.product_images AS pi ON p.id = pi.producto_id AND pi.is_main = true
+        INNER JOIN public.product_images AS pi ON p.id = pi.product_id AND pi.is_main = true
         INNER JOIN public.brands AS b ON p.brand_id = b.id
         INNER JOIN public.cart_items AS ci ON p.id = ci.product_id
         WHERE p.id = $1 AND ci.cart_id = $2;`

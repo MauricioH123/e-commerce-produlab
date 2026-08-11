@@ -9,7 +9,7 @@ export class Carts {
         FROM public.carts AS c
         INNER JOIN public.cart_items AS ci ON c.id = ci.cart_id
         INNER JOIN public.products AS p ON ci.product_id = p.id
-        INNER JOIN public.product_images AS pi ON p.id = pi.producto_id
+        INNER JOIN public.product_images AS pi ON p.id = pi.product_id
         WHERE c.state = true AND c.user_id = $1 AND pi.is_main = true;
         `
         const result = await pool.query(query, [user_id])
