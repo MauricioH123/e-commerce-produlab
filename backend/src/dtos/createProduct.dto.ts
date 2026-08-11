@@ -6,7 +6,7 @@ export type ProductPhoto = {
     url: string,
     order: number,
     is_main: boolean,
-    alt_text: string,
+    public_id: string
 }
 
 export type ProductMain = {
@@ -37,7 +37,6 @@ export type TProduct = {
     name: string,
     description: string,
     category_id: number,
-    photos: ProductPhoto[]
     state: boolean,
     iva: boolean,
     price: number,
@@ -56,13 +55,11 @@ export type ProductUpate = {
     brand_id?: number
 }
 
-export function createProductDTO(objet: Omit<TProduct, 'id'>): Omit<TProduct, 'id'> {
+export function createProductDTO(objet: Omit<TProduct, 'id' |'state'>): Omit<TProduct, 'id' | 'state'> {
     return {
         name: capitalizeWords(objet.name),
         description: capitalizeWords(objet.description),
         category_id: objet.category_id,
-        photos: objet.photos,
-        state: objet.state,
         iva: objet.iva,
         price: objet.price,
         brand_id: objet.brand_id,

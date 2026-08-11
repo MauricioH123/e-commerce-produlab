@@ -67,7 +67,7 @@ export class Product {
         }
     }
 
-    static async create({ input, client }: { input: Omit<TProduct, 'photos' | 'id' | 'amount'>, client: PoolClient }): Promise<Omit<TProduct, 'photos'>> {
+    static async create({ input, client }: { input: Omit<TProduct, 'id' | 'amount' | 'state'>, client: PoolClient }): Promise<TProduct> {
         const values = [
             input.name,
             input.description,

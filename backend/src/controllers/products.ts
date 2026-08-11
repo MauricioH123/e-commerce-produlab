@@ -33,6 +33,12 @@ export class ProductoController {
     static create = async (req: Request, res: Response, next: NextFunction) => {
         const user_id = String(req.user.sub)
         const body = req.body
+        const files = req.files
+
+        if(!files || !Array.isArray(files) || files.length === 0){
+            return next(new InvalidError('Datos invalidos', 'El producto debe tener al menos una foto'))
+        }
+        
         const validate = validateProduct(body)
 
         if (!validate.success) {
@@ -42,7 +48,7 @@ export class ProductoController {
         const productDTO = createProductDTO(validate.data)
 
         try {
-            const product = await RegisterProduct.execute(productDTO, user_id)
+            const product = await RegisterProduct.execute(productDTO, user_id, files)
 
             return createdResponse({ res, data: product })
         } catch (e) {
