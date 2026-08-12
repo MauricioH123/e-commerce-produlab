@@ -23,7 +23,7 @@ export class AuthController {
             return next(new InvalidError('Datos invalidos', validate.error.issues))
         }
 
-        const userDTO = createUserDTO(body)
+        const userDTO = createUserDTO(validate.data)
 
         try {
             const { user, accessToken, refreshToken } = await RegisterUserService.execute(userDTO)

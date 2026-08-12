@@ -33,9 +33,6 @@ export class RegisterUserService {
                 name: userWithoutAddress.name
             }
 
-            const address = await Address.create({ user: userToCreate, user_id: user.id, client })
-
-
             const accessToken = generateAccessToken(user)
 
             const refreshToken = await createRefreshToken(user.id, client)

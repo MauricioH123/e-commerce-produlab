@@ -13,7 +13,7 @@ export type UserWithOrders = {
     number_of_orders: string
 }
 
-export type UserLogin ={
+export type UserLogin = {
     password: string,
     state: boolean,
     id: string,
@@ -62,7 +62,7 @@ export type UserProfile = {
 
 export type createAddressDTO = Omit<TAddress, 'id' | 'user_id' | 'is_main'>
 
-export type CreateUserDTO = Omit<TUser, 'id' | 'addresses' | 'rol_id' | 'state'> & { address: createAddressDTO }
+export type CreateUserDTO = Omit<TUser, 'id' | 'addresses' | 'rol_id' | 'state'>
 
 export function createUserDTO(object: CreateUserDTO): CreateUserDTO {
     return {
@@ -72,12 +72,14 @@ export function createUserDTO(object: CreateUserDTO): CreateUserDTO {
         password: object.password,
         identification_id: object.identification_id,
         phone_number: removeSpaces(object.phone_number),
-        address: {
-            neighborhood: capitalizeWords(object.address.neighborhood),
-            address_line: capitalizeWords(object.address.address_line),
-            department_id: object.address.department_id,
-            municipality_id: object.address.municipality_id,
-            instructions: object.address.instructions ? capitalizeWords(object.address.instructions): null
-        }
     }
 }
+
+
+// address: {
+//     neighborhood: capitalizeWords(object.address.neighborhood),
+//     address_line: capitalizeWords(object.address.address_line),
+//     department_id: object.address.department_id,
+//     municipality_id: object.address.municipality_id,
+//     instructions: object.address.instructions ? capitalizeWords(object.address.instructions): null
+// }

@@ -25,7 +25,7 @@ export const userSchema = z.object({
         .regex(/^\d+$/, { message: 'El número de celular solo puede contener dígitos.' }),
 });
 
-export const createUserSchema = userSchema.omit({ id: true }).extend({ address: createAddressSchema })
+export const createUserSchema = userSchema.omit({ id: true })
 
 export const loginUserSchema = z.object({
     email: z.email({ message: "El correo electronico no es válido." }),
