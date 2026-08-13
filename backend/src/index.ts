@@ -10,7 +10,6 @@ import './jobs/cleanIdempotencyKeys.js';
 import cookieParser from 'cookie-parser';
 import { authRouter } from './routes/auth.js';
 import helmet from 'helmet';
-import { addresRouter } from './routes/address.js';
 import { brandsRoute } from './routes/brands.js';
 import { cartsRouter } from './routes/carts.js';
 import { inventoryRouter } from './routes/inventory.js';
@@ -30,7 +29,6 @@ app.use('/auth', authRouter)
 app.use('/users', usersRouter)
 app.use('/categories', categoryRouter)
 app.use('/products', productsRouter)
-app.use('/address', addresRouter)
 app.use('/brands', brandsRoute)
 app.use('/carts', cartsRouter)
 app.use('/inventary', inventoryRouter)
